@@ -1,7 +1,12 @@
+**Based on https://github.com/git-time-metric/gtm**
 <div align="center"><img src="https://cloud.githubusercontent.com/assets/630550/19619834/43c460dc-9835-11e6-8652-1c8fff91cf02.png" alt="GTM Logo" height="115" width="275"></div>
 <div align="center"><font size=16><bold>Git Time Metric</bold></font></div>
 
 ### Seamless time tracking for all your Git projects
+![Build](https://github.com/kilpkonn/gtm-enhanced/workflows/Build/badge.svg?branch=master)
+
+## Installation
+See wiki: https://github.com/kilpkonn/gtm-enhanced/wiki/Installation
 
 ##### $ gtm report -last-month
 <div><img src="https://cloud.githubusercontent.com/assets/630550/21582250/8a03f9dc-d015-11e6-8f77-548ef7314bf7.png"></div>
@@ -31,47 +36,6 @@ Simply install a plugin for your favorite editor and the GTM command line utilit
 <img src="https://cloud.githubusercontent.com/assets/630550/17458591/82e06c98-5bdb-11e6-8ae0-c5b2bd2fe97f.png" width="64" height="64">
 <img src="https://cloud.githubusercontent.com/assets/630550/17458558/72269342-5bda-11e6-8194-d9bf030bd037.png" width="64" height="64">
 <img src="https://cloud.githubusercontent.com/assets/630550/19619987/f9f7523a-9838-11e6-99da-c3fda05ce0d6.png" width="64" height="64"></p>
-
-# Getting Started
-
-### Install the latest GTM release
-
-**Mac OS X**
-
-The simplest way to install is to use [Homebrew](http://brew.sh)
-
-```
-brew tap git-time-metric/gtm
-brew install gtm
-```
-
-**Windows**
-
-- Download and run the Windows installer from [here](https://github.com/kilpkonn/gtm-enhanced/releases/latest)
-
-**Linux**
-
-The simplest way to install is to use [Linuxbrew](http://linuxbrew.sh/)
-
-```
-brew tap git-time-metric/gtm
-brew install gtm
-```
-
-**Manually install for Linux, OSX or Windows**
-
-- Download and install the executable from [here](https://github.com/kilpkonn/gtm-enhanced/releases/latest)
-
-
-### Install a plugin for your editor
-
-- [Sublime 3](https://github.com/git-time-metric/gtm-sublime3-plugin)
-- [Atom](https://github.com/git-time-metric/gtm-atom-plugin)
-- [Vim](https://github.com/git-time-metric/gtm-vim-plugin)
-- [IntelliJ IDEA, PyCharm, WebStorm, AppCode, RubyMine, PhpStorm, AndroidStudio ](https://github.com/git-time-metric/gtm-jetbrains-plugin)
-- [VSCode](https://github.com/nexus-uw/vscode-gtm)
-- [Visual Studio](https://github.com/jjonescz/gtm-visualstudio-plugin)
-- [Terminal](https://github.com/git-time-metric/gtm-terminal-plugin)
 
 ### Initialize a project for time tracking
 
@@ -129,30 +93,52 @@ For help from the command line type `gtm --help` and `gtm <subcommand> --help`.
 For additional help please consult the [Wiki](https://github.com/kilpkonn/gtm-enhanced/wiki).
 
 # Contributing
-[![Build Status](https://travis-ci.org/git-time-metric/gtm.svg?branch=develop)](https://travis-ci.org/git-time-metric/gtm) [![Build status](https://ci.appveyor.com/api/projects/status/gj6tvm8njgwj0hqi?svg=true)](https://ci.appveyor.com/project/mschenk42/gtm) [![Coverage Status](https://coveralls.io/repos/github/git-time-metric/gtm/badge.svg)](https://coveralls.io/github/git-time-metric/gtm) [![Go Report Card](https://goreportcard.com/badge/github.com/git-time-metric/gtm)](https://goreportcard.com/report/github.com/git-time-metric/gtm)
-
 If you find a bug or have an idea for a new feature please feel free to file new issues and submits PRs.  In particular if there isn't a plugin for your favorite editor, go ahead and create one!
 
 For more detail on how to write plugins, check out the [Wiki](https://github.com/kilpkonn/gtm-enhanced/wiki/Editor-Plugins).
+
+# Building from source
+
+### Install go
+You can follow any go installation tutorial, one for ubuntu for example: https://medium.com/golang-basics/installing-go-on-ubuntu-b443a8f0eb55
+
+### Install apt dependencies
+```bash
+sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
+```
+
+### Clone gtm-enhanced
+```bash
+git clone https://github.com/kilpkonn/gtm-enhanced.git
+mv gtm-enhanced $GOPATH/src/github.com/kilpkonn/
+cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+git submodule update --init # Install vendor dependecies
+```
+
+### Install dependencies
+```bash
+go get -d github.com/Masterminds/sprig
+go get -d github.com/libgit2/git2go
+cd $GOPATH/src/github.com/libgit2/git2go
+git submodule update --init # get libgit2
+cd vendor/libgit2
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+cd ../../..
+make install-static
+```
+
+### Build
+```bash
+cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+mkdir build
+go build -o build/ ./...
+```
 
 # Support
 
 To report a bug, please submit an issue on the [GitHub Page](https://github.com/kilpkonn/gtm-enhanced/issues)
 
 Consult the [Wiki](https://github.com/kilpkonn/gtm-enhanced/wiki) for more information.
-
-
-
-
-```bash
-sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
-```
-
-```bash
-cd $GOPATH/src/github.com/libgit2/git2go
-git checkout next
-git submodule update --init # get libgit2
-make
-
-make install # not needed ??
-```
