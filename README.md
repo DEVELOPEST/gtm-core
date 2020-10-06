@@ -1,3 +1,4 @@
+**Based on https://github.com/git-time-metric/gtm**
 <div align="center"><img src="https://cloud.githubusercontent.com/assets/630550/19619834/43c460dc-9835-11e6-8652-1c8fff91cf02.png" alt="GTM Logo" height="115" width="275"></div>
 <div align="center"><font size=16><bold>Git Time Metric</bold></font></div>
 
@@ -129,11 +130,44 @@ For help from the command line type `gtm --help` and `gtm <subcommand> --help`.
 For additional help please consult the [Wiki](https://github.com/kilpkonn/gtm-enhanced/wiki).
 
 # Contributing
-[![Build Status](https://travis-ci.org/git-time-metric/gtm.svg?branch=develop)](https://travis-ci.org/git-time-metric/gtm) [![Build status](https://ci.appveyor.com/api/projects/status/gj6tvm8njgwj0hqi?svg=true)](https://ci.appveyor.com/project/mschenk42/gtm) [![Coverage Status](https://coveralls.io/repos/github/git-time-metric/gtm/badge.svg)](https://coveralls.io/github/git-time-metric/gtm) [![Go Report Card](https://goreportcard.com/badge/github.com/git-time-metric/gtm)](https://goreportcard.com/report/github.com/git-time-metric/gtm)
-
 If you find a bug or have an idea for a new feature please feel free to file new issues and submits PRs.  In particular if there isn't a plugin for your favorite editor, go ahead and create one!
 
 For more detail on how to write plugins, check out the [Wiki](https://github.com/kilpkonn/gtm-enhanced/wiki/Editor-Plugins).
+
+# Building from source
+
+### Install go
+You can follow any go installation tutorial, one for ubuntu for example: https://medium.com/golang-basics/installing-go-on-ubuntu-b443a8f0eb55
+
+### Clone gtm-enhanced
+```bash
+git clone https://github.com/kilpkonn/gtm-enhanced.git
+mv gtm-enhanced $GOPATH/src/github.com/kilpkonn/
+cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+git submodule update --init # Install vendor dependecies
+```
+
+### Install dependencies
+```bash
+go get -d github.com/Masterminds/sprig
+go get -d github.com/libgit2/git2go
+cd $GOPATH/src/github.com/libgit2/git2go
+git submodule update --init # get libgit2
+cd vendor/libgit2
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+cd ../../..
+make install-static
+```
+
+### Build
+```bash
+cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+mkdir build
+go build -o build/ ./...
+```
 
 # Support
 
