@@ -36,7 +36,13 @@ var (
 		"post-commit": {
 			Exe:     "gtm",
 			Command: "gtm commit --yes",
-			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`)},
+			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`),
+		},
+		"pre-push": {
+			Exe:     "git",
+			Command: "git push origin refs/notes/gtm-data --no-verify",
+			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
+		},
 	}
 	// GitConfig is map of git configuration settings
 	GitConfig = map[string]string{
