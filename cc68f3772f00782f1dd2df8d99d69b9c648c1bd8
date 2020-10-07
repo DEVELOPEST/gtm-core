@@ -1,0 +1,6 @@
+[ver:1,total:2640]
+project/project.go:2205,1602093600:1905,1602097200:300,m
+command/init.go:180,1602090000:180,r
+scm/git.go:180,1602093600:180,r
+.github/pull_request_template.md:60,1602090000:60,r
+main.go:15,1602093600:15,r
