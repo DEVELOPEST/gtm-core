@@ -51,6 +51,10 @@ var (
 		"notes.rewriteref": "refs/notes/gtm-data"}
 	// GitIgnore is file ignore to apply to git repo
 	GitIgnore = "/.gtm/"
+
+	GitRemotesFetchRefs = []string{
+		"+refs/notes/gtm-data:refs/notes/gtm-data",
+	}
 )
 
 const (
@@ -156,6 +160,10 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 		return "", err
 	}
 
+	if err := scm.FetchRemotesAddRefSpecs(GitRemotesFetchRefs, gitRepoPath); err != nil {
+		return "", err
+	}
+
 	if err := scm.IgnoreSet(GitIgnore, workDirRoot); err != nil {
 		return "", err
 	}
@@ -227,6 +235,9 @@ func Uninitialize() (string, error) {
 		return "", err
 	}
 	if err := scm.ConfigRemove(GitConfig, gitRepoPath); err != nil {
+		return "", err
+	}
+	if err := scm.FetchRemotesRemoveRefSpecs(GitRemotesFetchRefs, gitRepoPath); err != nil {
 		return "", err
 	}
 	if err := scm.IgnoreRemove(GitIgnore, workDir); err != nil {
