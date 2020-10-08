@@ -77,3 +77,4 @@ tags
 /bin/
 /build
 /go_build*
+/gtm_tests
