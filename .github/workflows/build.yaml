@@ -48,7 +48,7 @@ jobs:
           go get -v -d github.com/kilpkonn/gtm-enhanced
           cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
           mkdir build
-          go build -o build/ ./...
+          env CGO_ENABLED=0 go build -o build/ ./...
           cd build/
           mv gtm-enhanced gtm
           chmod +x gtm
@@ -145,7 +145,7 @@ jobs:
           go get -v -d github.com/kilpkonn/gtm-enhanced
           cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
           mkdir build
-          go build -o build/ ./...
+          env CGO_ENABLED=0 go build -o build/ ./...
           cd build/
           mv gtm-enhanced gtm
           chmod +x gtm
