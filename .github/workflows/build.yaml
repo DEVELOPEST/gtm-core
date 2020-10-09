@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - develop
+      - feature/CORE-4
   pull_request:
     branches:
       - master
