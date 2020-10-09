@@ -1,0 +1,4 @@
+[ver:1,total:1020]
+test/commit_test.py:660,1602262800:660,d
+.github/workflows/build.yaml:300,1602262800:180,1602266400:120,m
+project/project.go:60,1602262800:60,r
