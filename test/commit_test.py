@@ -99,8 +99,8 @@ if __name__ == '__main__':
     commit_times_gtm = []
     git_size_benchmark = []
     git_size_gtm = []
-    n = 5000
-    x_tick_len = 10
+    n = 10000
+    x_tick_len = 25
 
     setup()
     for _ in range(n // x_tick_len):
@@ -123,8 +123,8 @@ if __name__ == '__main__':
     cleanup()
 
     results.append('-' * 50)
-    results.append(f'2000 commits Benchmark time: {round(sum(commit_times_benchmark), 2)}s')
-    results.append(f'2000 commits Gtm time: {round(sum(commit_times_gtm), 2)}s')
+    results.append(f'{n} commits Benchmark time: {round(sum(commit_times_benchmark), 2)}s')
+    results.append(f'{n} commits Gtm time: {round(sum(commit_times_gtm), 2)}s')
     results.append(f'Benchmark .git folder size: {round(size_benchmark / 1024, 2)} kB')
     results.append(f'Gtm .git folder size: {round(size_gtm / 1024, 2)} kB')
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     commit_times_gtm = []
     git_size_benchmark = []
     git_size_gtm = []
-    n = 200
+    n = 250
     x_tick_len = 5
 
     setup()
@@ -172,8 +172,8 @@ if __name__ == '__main__':
     cleanup()
 
     results.append('-' * 50)
-    results.append(f'100 commits inc size Benchmark time: {round(sum(commit_times_benchmark), 2)}s')
-    results.append(f'100 commits inc size (7500 record events) Gtm time: {round(sum(commit_times_gtm), 2)}s')
+    results.append(f'{n} commits inc size Benchmark time: {round(sum(commit_times_benchmark), 2)}s')
+    results.append(f'{n} commits inc size ({n**2 * 1.5 / 2} record events) Gtm time: {round(sum(commit_times_gtm), 2)}s')
     results.append(f'Benchmark .git folder size: {round(size_benchmark / 1024, 2)} kB')
     results.append(f'Gtm .git folder size: {round(size_gtm / 1024, 2)} kB')
 
@@ -199,11 +199,12 @@ if __name__ == '__main__':
     plt.plot([x for x in range(round(n / x_tick_len))], git_size_gtm, label='Gtm')
     plt.legend()
     plt.xlabel('Run number')
-    plt.ylabel(f'{x_tick_len} .git folder size')
+    plt.ylabel(f'{x_tick_len} .git folder size (kb)')
+    plt.yscale('log')
     plt.savefig('../git_size_inc.png')
     plt.clf()
 
-    results.append(f'7500 record event time: {round(sum(record_times), 2)}s')
+    results.append(f'{n * 1.5 * n / 2} record event time: {round(sum(record_times), 2)}s')
 
     for line in results:
         print(line)
