@@ -6,6 +6,8 @@ import shutil
 import subprocess
 import time
 
+from matplotlib import pyplot as plt
+
 TEST_PATH = './gtm_tests/'
 GTM_PATH = '../build/go_build_github_com_kilpkonn_gtm_enhanced'
 TEST_FILE_NAME = 'test.txt'
@@ -93,25 +95,54 @@ if __name__ == '__main__':
 
     results = ['Results:']
 
+    commit_times_benchmark = []
+    commit_times_gtm = []
+    git_size_benchmark = []
+    git_size_gtm = []
+    n = 5000
+    x_tick_len = 50
+
     setup()
-    start_benchmark = time.time()
-    test_commit_benchmark(2000)
-    end_benchmark = time.time()
+    for _ in range(n // x_tick_len):
+        start_benchmark = time.time()
+        test_commit_benchmark(x_tick_len)
+        end_benchmark = time.time()
+        commit_times_benchmark.append(round(end_benchmark - start_benchmark, 3))
+        git_size_benchmark.append(get_size('.git'))
     size_benchmark = get_size('.git')
     cleanup()
 
     setup()
-    start_gtm = time.time()
-    test_commit_gtm(2000)
-    end_gtm = time.time()
+    for _ in range(n // x_tick_len):
+        start_gtm = time.time()
+        test_commit_gtm(x_tick_len)
+        end_gtm = time.time()
+        commit_times_gtm.append(round(end_gtm - start_gtm, 3))
+        git_size_gtm.append(get_size('.git'))
     size_gtm = get_size('.git')
     cleanup()
 
     results.append('-' * 50)
-    results.append(f'2000 commits Benchmark time: {round(end_benchmark - start_benchmark, 2)}s')
-    results.append(f'2000 commits Gtm time: {round(end_gtm - start_gtm, 2)}s')
+    results.append(f'2000 commits Benchmark time: {round(sum(commit_times_benchmark), 2)}s')
+    results.append(f'2000 commits Gtm time: {round(sum(commit_times_gtm), 2)}s')
     results.append(f'Benchmark .git folder size: {round(size_benchmark / 1024, 2)} kB')
     results.append(f'Gtm .git folder size: {round(size_gtm / 1024, 2)} kB')
+
+    plt.plot([x for x in range(round(n / x_tick_len))], commit_times_benchmark, label='Benchmark')
+    plt.plot([x for x in range(round(n / x_tick_len))], commit_times_gtm, label='Gtm')
+    plt.legend()
+    plt.xlabel('Run number')
+    plt.ylabel(f'{x_tick_len} commit time')
+    plt.savefig('../commit_times.png')
+    plt.clf()
+
+    plt.plot([x for x in range(round(n / x_tick_len))], git_size_benchmark, label='Benchmark')
+    plt.plot([x for x in range(round(n / x_tick_len))], git_size_gtm, label='Gtm')
+    plt.legend()
+    plt.xlabel('Run number')
+    plt.ylabel(f'{x_tick_len} .git folder size')
+    plt.savefig('../git_size.png')
+    plt.clf()
 
     setup()
     start_benchmark = time.time()
