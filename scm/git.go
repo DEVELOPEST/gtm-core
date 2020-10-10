@@ -605,6 +605,82 @@ func ConfigRemove(settings map[string]string, wd ...string) error {
 	return nil
 }
 
+func FetchRemotesAddRefSpecs(refSpecs []string, wd ...string) error {
+	var (
+		err        error
+		repo       *git.Repository
+		remotes    []string
+		remoteRepo *git.Remote
+		refs       []string
+		added      bool
+	)
+
+	if len(wd) > 0 {
+		repo, err = openRepository(wd[0])
+	} else {
+		repo, err = openRepository()
+	}
+	if err != nil {
+		return err
+	}
+
+	remotes, err = repo.Remotes.List()
+	for _, remote := range remotes {
+		for _, refSpec := range refSpecs {
+			remoteRepo, err = repo.Remotes.Lookup(remote)
+			if err == nil {
+				refs, err = remoteRepo.FetchRefspecs()
+			}
+			added = false
+			for _, ref := range refs {
+				added = added || ref == refSpec
+			}
+			if err == nil && !added {
+				err = repo.Remotes.AddFetch(remote, refSpec)
+			}
+			if err != nil {
+				fmt.Println("Error updating ref spec for: " + remote)
+				err = nil
+			}
+			remoteRepo.Free()
+		}
+	}
+	return nil
+}
+
+func FetchRemotesRemoveRefSpecs(refSpecs []string, wd ...string) error {
+	var (
+		err        error
+		repo       *git.Repository
+		remotes    []string
+		remoteRepo *git.Remote
+	)
+
+	if len(wd) > 0 {
+		repo, err = openRepository(wd[0])
+	} else {
+		repo, err = openRepository()
+	}
+	if err != nil {
+		return err
+	}
+
+	remotes, err = repo.Remotes.List()
+	for _, remote := range remotes {
+		remoteRepo, err = repo.Remotes.Lookup(remote)
+		if err == nil {
+			err = repo.Remotes.Delete(remote) // TODO: Fix this as this does noting
+			remoteRepo.PruneRefs()
+		}
+		if err != nil {
+			fmt.Println("Error updating ref spec for: " + remote)
+			err = nil
+		}
+		remoteRepo.Free()
+	}
+	return nil
+}
+
 // GitHook is the Command with options to be added/removed from a git hook
 // Exe is the executable file name for Linux/MacOS
 // RE is the regex to match on for the command

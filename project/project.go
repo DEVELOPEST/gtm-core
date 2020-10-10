@@ -36,7 +36,13 @@ var (
 		"post-commit": {
 			Exe:     "gtm",
 			Command: "gtm commit --yes",
-			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`)},
+			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`),
+		},
+		"pre-push": {
+			Exe:     "git",
+			Command: "git push origin refs/notes/gtm-data --no-verify",
+			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
+		},
 	}
 	// GitConfig is map of git configuration settings
 	GitConfig = map[string]string{
@@ -45,6 +51,10 @@ var (
 		"notes.rewriteref": "refs/notes/gtm-data"}
 	// GitIgnore is file ignore to apply to git repo
 	GitIgnore = "/.gtm/"
+
+	GitFetchRefs = []string{
+		"+refs/notes/gtm-data:refs/notes/gtm-data",
+	}
 )
 
 const (
@@ -63,6 +73,9 @@ const initMsgTpl string = `
 {{ range $key, $val := .GitConfig -}}
 	{{- $key | printf "%16s" }}: {{ $val }}
 {{end -}}
+{{ range $ref := .GitFetchRefs -}}
+    {{ print "add fetch ref:" | printf "%17s" }} {{ $ref}}
+{{end -}}
 {{ print "terminal:" | printf "%17s" }} {{ .Terminal }}
 {{ print ".gitignore:" | printf "%17s" }} {{ .GitIgnore }}
 {{ print "tags:" | printf "%17s" }} {{.Tags }}
@@ -79,6 +92,8 @@ The following items have been removed.
 	{{- $key | printf "%16s" }}: {{ $val }}
 {{end -}}
 {{ print ".gitignore:" | printf "%17s" }} {{ .GitIgnore }}
+
+Make sure to manually remove fetch refs for notes!
 `
 
 // Initialize initializes a git repo for time tracking
@@ -150,6 +165,10 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 		return "", err
 	}
 
+	if err := scm.FetchRemotesAddRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
+		return "", err
+	}
+
 	if err := scm.IgnoreSet(GitIgnore, workDirRoot); err != nil {
 		return "", err
 	}
@@ -168,6 +187,7 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 			ProjectPath  string
 			GitHooks     map[string]scm.GitHook
 			GitConfig    map[string]string
+			GitFetchRefs []string
 			GitIgnore    string
 			Terminal     bool
 		}{
@@ -176,6 +196,7 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 			workDirRoot,
 			GitHooks,
 			GitConfig,
+			GitFetchRefs,
 			GitIgnore,
 			terminal,
 		})
@@ -221,6 +242,9 @@ func Uninitialize() (string, error) {
 		return "", err
 	}
 	if err := scm.ConfigRemove(GitConfig, gitRepoPath); err != nil {
+		return "", err
+	}
+	if err := scm.FetchRemotesRemoveRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
 		return "", err
 	}
 	if err := scm.IgnoreRemove(GitIgnore, workDir); err != nil {

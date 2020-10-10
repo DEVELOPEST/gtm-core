@@ -76,4 +76,8 @@ tags
 
 /bin/
 /build
+/venv
 /go_build*
+/gtm_tests
+*.png
+*.jpg
