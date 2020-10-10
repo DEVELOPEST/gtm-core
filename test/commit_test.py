@@ -62,23 +62,23 @@ def test_commit_gtm(n: int):
         subprocess.call(['git', 'commit', '.', '-m "test"'])
 
 
-def test_commit_increasing_size_benchmark(n: int, increase_multiplier: float):
+def test_commit_increasing_size_benchmark(n: int, increase_multiplier: float, offset: int = 0):
     """Test commit 10000 times with increasing file size."""
     for i in range(n):
         with open(TEST_FILE_NAME, 'a') as f:
-            new_text = ''.join([f'{n} - {x}\n' for x in range(round(i * increase_multiplier))])
+            new_text = ''.join([f'{n + offset} - {x}\n' for x in range(round((offset + i) * increase_multiplier))])
             f.write(new_text)
         subprocess.call(['git', 'commit', '.', '-m "test"'])
 
 
-def test_commit_increasing_size_gtm(n: int, increase_multiplier: float):
+def test_commit_increasing_size_gtm(n: int, increase_multiplier: float, offset: int = 0):
     """Test commit 10000 times with increasing file size."""
     for i in range(n):
         with open(TEST_FILE_NAME, 'a') as f:
-            new_text = ''.join([f'{n} - {x}\n' for x in range(round(i * increase_multiplier))])
+            new_text = ''.join([f'{offset + n} - {x}\n' for x in range(round((offset + i) * increase_multiplier))])
             f.write(new_text)
 
-        for _ in range(round(i * increase_multiplier)):
+        for _ in range(round((offset + i) * increase_multiplier)):
             subprocess.call(['./gtm', 'record', TEST_FILE_NAME])
         subprocess.call(['git', 'commit', '.', '-m "test"'])
 
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     git_size_benchmark = []
     git_size_gtm = []
     n = 5000
-    x_tick_len = 50
+    x_tick_len = 10
 
     setup()
     for _ in range(n // x_tick_len):
@@ -144,33 +144,66 @@ if __name__ == '__main__':
     plt.savefig('../git_size.png')
     plt.clf()
 
+    commit_times_benchmark = []
+    commit_times_gtm = []
+    git_size_benchmark = []
+    git_size_gtm = []
+    n = 200
+    x_tick_len = 5
+
     setup()
-    start_benchmark = time.time()
-    test_commit_increasing_size_benchmark(100, 1.5)
-    end_benchmark = time.time()
+    for a in range(n // x_tick_len):
+        start_benchmark = time.time()
+        test_commit_increasing_size_benchmark(x_tick_len, 1.5, a * x_tick_len)
+        end_benchmark = time.time()
+        commit_times_benchmark.append(round(end_benchmark - start_benchmark, 3))
+        git_size_benchmark.append(get_size('.git'))
     size_benchmark = get_size('.git')
     cleanup()
 
     setup()
-    start_gtm = time.time()
-    test_commit_increasing_size_gtm(100, 1.5)
-    end_gtm = time.time()
+    for a in range(n // x_tick_len):
+        start_gtm = time.time()
+        test_commit_increasing_size_gtm(x_tick_len, 1.5, a * x_tick_len)
+        end_gtm = time.time()
+        commit_times_gtm.append(round(end_gtm - start_gtm, 3))
+        git_size_gtm.append(get_size('.git'))
     size_gtm = get_size('.git')
     cleanup()
 
     results.append('-' * 50)
-    results.append(f'100 commits inc size Benchmark time: {round(end_benchmark - start_benchmark, 2)}s')
-    results.append(f'100 commits inc size (7500 record events) Gtm time: {round(end_gtm - start_gtm, 2)}s')
+    results.append(f'100 commits inc size Benchmark time: {round(sum(commit_times_benchmark), 2)}s')
+    results.append(f'100 commits inc size (7500 record events) Gtm time: {round(sum(commit_times_gtm), 2)}s')
     results.append(f'Benchmark .git folder size: {round(size_benchmark / 1024, 2)} kB')
     results.append(f'Gtm .git folder size: {round(size_gtm / 1024, 2)} kB')
 
+    record_times = []
     setup()
-    start_gtm = time.time()
-    test_commit_record_gtm(100 * 75)
-    end_gtm = time.time()
+    for a in range(n // x_tick_len):
+        start_gtm = time.time()
+        test_commit_record_gtm(round(a * 1.5 * x_tick_len))
+        end_gtm = time.time()
+        record_times.append(round(end_gtm - start_gtm, 3))
     cleanup()
 
-    results.append(f'7500 record event time: {round(end_gtm - start_gtm, 2)}s')
+    commit_times_benchmark = [x - y for x, y in zip(commit_times_gtm, record_times)]
+    plt.plot([x for x in range(round(n / x_tick_len))], commit_times_benchmark, label='Benchmark')
+    plt.plot([x for x in range(round(n / x_tick_len))], commit_times_gtm, label='Gtm')
+    plt.legend()
+    plt.xlabel('Run number')
+    plt.ylabel(f'{x_tick_len} commit time')
+    plt.savefig('../commit_times_inc.png')
+    plt.clf()
+
+    plt.plot([x for x in range(round(n / x_tick_len))], git_size_benchmark, label='Benchmark')
+    plt.plot([x for x in range(round(n / x_tick_len))], git_size_gtm, label='Gtm')
+    plt.legend()
+    plt.xlabel('Run number')
+    plt.ylabel(f'{x_tick_len} .git folder size')
+    plt.savefig('../git_size_inc.png')
+    plt.clf()
+
+    results.append(f'7500 record event time: {round(sum(record_times), 2)}s')
 
     for line in results:
         print(line)
