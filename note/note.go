@@ -23,7 +23,7 @@ type CommitNote struct {
 
 // FilterOutTerminal filters out terminal time from commit note
 func (n CommitNote) FilterOutTerminal() CommitNote {
-	fds := []FileDetail{}
+	var fds []FileDetail
 	for _, f := range n.Files {
 		if !f.IsTerminal() {
 			fds = append(fds, f)
@@ -34,9 +34,20 @@ func (n CommitNote) FilterOutTerminal() CommitNote {
 
 // FilterOutApp filters out app time from commit note
 func (n CommitNote) FilterOutApp() CommitNote {
-	fds := []FileDetail{}
+	var fds []FileDetail
 	for _, f := range n.Files {
 		if !f.IsApp() {
+			fds = append(fds, f)
+		}
+	}
+	return CommitNote{Files: fds}
+}
+
+// FilterOutSubdir removes all notes not related to subdir
+func (n CommitNote) FilterOutSubdir(subdir string) CommitNote {
+	var fds []FileDetail
+	for _, f := range n.Files {
+		if strings.HasPrefix(f.SourceFile, subdir) {
 			fds = append(fds, f)
 		}
 	}
