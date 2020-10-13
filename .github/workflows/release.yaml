@@ -7,21 +7,15 @@ on:
         description: 'Release version'
         required: true
 
-  pull_request:
-    branches:
-      - develop
-
-env:
-  APP_NAME: 'gtm-enhanced'
-  MAINTAINER: 'kilpkonn'
-  DESC: 'Seamless time tracking for git.'
-
 jobs:
   build-linux:
     runs-on: ubuntu-latest
     env:
       GOPATH: ${{ github.workspace }}
       GO111MODULE: auto
+      APP_NAME: 'gtm-enhanced'
+      MAINTAINER: 'kilpkonn'
+      DESC: 'Seamless time tracking for git.'
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
