@@ -3,7 +3,8 @@
 <div align="center"><font size=16><bold>Git Time Metric</bold></font></div>
 
 ### Seamless time tracking for all your Git projects
-![Build](https://github.com/kilpkonn/gtm-enhanced/workflows/Build/badge.svg?branch=master)
+![Release](https://github.com/kilpkonn/gtm-enhanced/workflows/Release/badge.svg?branch=master)
+![Develop](https://github.com/kilpkonn/gtm-enhanced/workflows/Develop/badge.svg?branch=develop)
 
 ## Installation
 See wiki: https://github.com/kilpkonn/gtm-enhanced/wiki/Installation
