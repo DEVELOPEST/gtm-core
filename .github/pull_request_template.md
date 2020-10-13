@@ -1,10 +1,3 @@
----
-name: Feature/[Issue title]
-about: Pull request issue template
-
----
-
-
 **Closes:** `[issue url]`
 
 **Changes:**
