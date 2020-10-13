@@ -38,11 +38,6 @@ var (
 			Command: "gtm commit --yes",
 			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`),
 		},
-		"pre-push": {
-			Exe:     "git",
-			Command: "git push origin refs/notes/gtm-data --no-verify",
-			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
-		},
 	}
 	// GitConfig is map of git configuration settingsx
 	GitConfig = map[string]string{
@@ -54,6 +49,14 @@ var (
 
 	GitFetchRefs = []string{
 		"+refs/notes/gtm-data:refs/notes/gtm-data",
+	}
+
+	GitPushRefsHooks = map[string]scm.GitHook{
+		"pre-push": {
+			Exe:     "git",
+			Command: "git push origin refs/notes/gtm-data --no-verify",
+			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
+		},
 	}
 
 	GitLabHooks = map[string]scm.GitHook{
@@ -103,7 +106,7 @@ The following items have been removed.
 `
 
 // Initialize initializes a git repo for time tracking
-func Initialize(terminal bool, tags []string, clearTags bool, autoLog string) (string, error) {
+func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, local bool) (string, error) {
 	wd, err := os.Getwd()
 
 	if err != nil {
@@ -163,6 +166,15 @@ func Initialize(terminal bool, tags []string, clearTags bool, autoLog string) (s
 		_ = os.Remove(filepath.Join(gtmPath, "terminal.app"))
 	}
 
+	if !local {
+		if err := scm.FetchRemotesAddRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
+			return "", err
+		}
+		for k, v := range GitPushRefsHooks {
+			GitHooks[k] = v
+		}
+	}
+
 	switch autoLog {
 	case "gitlab":
 		for k, v := range GitLabHooks {
@@ -175,10 +187,6 @@ func Initialize(terminal bool, tags []string, clearTags bool, autoLog string) (s
 	}
 
 	if err := scm.ConfigSet(GitConfig, gitRepoPath); err != nil {
-		return "", err
-	}
-
-	if err := scm.FetchRemotesAddRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
 		return "", err
 	}
 

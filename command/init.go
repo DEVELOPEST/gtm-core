@@ -37,6 +37,8 @@ Options:
 
   -auto-log=""				 Enable automatic logging to commits for platform [gitlab].
 
+  -local=false				 Initialize gtm locally, ak no push / fetch hooks are added
+
   -tags=tag1,tag2            Add tags to projects, multiple calls appends tags.
 
   -clear-tags                Clear all tags.
@@ -46,10 +48,11 @@ Options:
 
 // Run executes init command with args
 func (c InitCmd) Run(args []string) int {
-	var terminal, clearTags bool
+	var terminal, clearTags, local bool
 	var tags, autoLog string
 	cmdFlags := flag.NewFlagSet("init", flag.ContinueOnError)
 	cmdFlags.BoolVar(&terminal, "terminal", true, "")
+	cmdFlags.BoolVar(&local, "local", false, "")
 	cmdFlags.StringVar(&autoLog, "auto-log", "", "")
 	cmdFlags.BoolVar(&clearTags, "clear-tags", false, "")
 	cmdFlags.StringVar(&tags, "tags", "", "")
@@ -57,7 +60,7 @@ func (c InitCmd) Run(args []string) int {
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
-	m, err := project.Initialize(terminal, util.Map(strings.Split(tags, ","), strings.TrimSpace), clearTags, autoLog)
+	m, err := project.Initialize(terminal, util.Map(strings.Split(tags, ","), strings.TrimSpace), clearTags, autoLog, local)
 	if err != nil {
 		c.UI.Error(err.Error())
 		return 1
