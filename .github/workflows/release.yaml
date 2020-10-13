@@ -1,12 +1,16 @@
-name: Deploy
+name: Release
 on:
-  push:
-    branches:
-      - master
-      - feature/CORE-18
-  pull_request:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version'
+        required: true
+
+env:
+  APP_NAME: 'gtm-enhanced'
+  MAINTAINER: 'kilpkonn'
+  DESC: 'Seamless time tracking for git.'
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -64,16 +68,16 @@ jobs:
       - name: Build deb package
         uses: jiro4989/build-deb-action@v2
         with:
-          package: gtm-enhanced
+          package: ${{ env.APP_NAME }}
           package_root: .debpkg
-          maintainer: kilpkonn
-          version: 0.0.0.1  # refs/tags/v*.*.*
+          maintainer: ${{ env.MAINTAINER }}
+          version: ${{ github.event.inputs.release_version }}
           arch: 'amd64'
-          desc: 'GTM-enhanced is a time tracking app for git.'
+          desc: ${{ env.DESC }}
       - name: Upload deb package
         uses: actions/upload-artifact@v2
         with:
-          name: artifact-deb
+          name: debian-linux
           path: |
             ./*.deb
   build-windows:
