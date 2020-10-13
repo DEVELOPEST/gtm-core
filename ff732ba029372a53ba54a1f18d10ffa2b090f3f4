@@ -1,0 +1,4 @@
+[ver:1,total:1020]
+scm/git.go:885,1602594000:885,m
+project/project.go:75,1602594000:75,m
+command/uninit.go:60,1602594000:60,r
