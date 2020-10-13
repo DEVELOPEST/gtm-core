@@ -43,8 +43,13 @@ var (
 			Command: "git push origin refs/notes/gtm-data --no-verify",
 			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
 		},
+		"prepare-commit-msg": {
+			Exe:     "git",
+			Command: "echo -n \"/spend \" >> $1; gtm status -total-only >> $1",
+			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*echo\s+-n\s+"/spend\s+"\s+>>\s+\$1;\s+gtm(.exe"|)\s+status\s+-total-only\s+>>\s+\$1\.*`),
+		},
 	}
-	// GitConfig is map of git configuration settings
+	// GitConfig is map of git configuration settingsx
 	GitConfig = map[string]string{
 		"alias.pushgtm":    "push origin refs/notes/gtm-data",
 		"alias.fetchgtm":   "fetch origin refs/notes/gtm-data:refs/notes/gtm-data",
