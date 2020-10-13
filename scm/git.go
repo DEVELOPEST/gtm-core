@@ -654,6 +654,10 @@ func FetchRemotesRemoveRefSpecs(refSpecs []string, wd ...string) error {
 		repo       *git.Repository
 		remotes    []string
 		remoteRepo *git.Remote
+		refs       []string
+		ref        *git.Reference
+		toRemove   bool
+		lookupRefs []string
 	)
 
 	if len(wd) > 0 {
@@ -669,8 +673,26 @@ func FetchRemotesRemoveRefSpecs(refSpecs []string, wd ...string) error {
 	for _, remote := range remotes {
 		remoteRepo, err = repo.Remotes.Lookup(remote)
 		if err == nil {
-			err = repo.Remotes.Delete(remote) // TODO: Fix this as this does noting
-			remoteRepo.PruneRefs()
+			refs, err = remoteRepo.FetchRefspecs()
+		}
+		if err == nil {
+			for _, refString := range refs {
+				toRemove = false
+				for _, refToRemove := range refSpecs {
+					toRemove = toRemove || refToRemove == refString
+				}
+				if !toRemove {
+					continue
+				}
+				lookupRefs = strings.Split(refString, ":")
+				if len(lookupRefs) < 2 {
+					fmt.Println("Error getting ref data: " + refString)
+				}
+				ref, err = repo.References.Lookup(lookupRefs[1]) // TODO: Apparently not found
+				if err == nil {
+					err = ref.Delete()
+				}
+			} // TODO: Fix this as this does noting
 		}
 		if err != nil {
 			fmt.Println("Error updating ref spec for: " + remote)
