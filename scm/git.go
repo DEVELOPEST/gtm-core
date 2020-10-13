@@ -650,35 +650,29 @@ func FetchRemotesAddRefSpecs(refSpecs []string, wd ...string) error {
 
 func FetchRemotesRemoveRefSpecs(refSpecs []string, wd ...string) error {
 	var (
-		err        error
-		repo       *git.Repository
-		remotes    []string
-		remoteRepo *git.Remote
+		buffer []byte
+		err    error
+		config string
 	)
 
 	if len(wd) > 0 {
-		repo, err = openRepository(wd[0])
+		buffer, err = ioutil.ReadFile(wd[0] + "/config")
 	} else {
-		repo, err = openRepository()
+		buffer, err = ioutil.ReadFile("/config")
 	}
 	if err != nil {
 		return err
 	}
-
-	remotes, err = repo.Remotes.List()
-	for _, remote := range remotes {
-		remoteRepo, err = repo.Remotes.Lookup(remote)
-		if err == nil {
-			err = repo.Remotes.Delete(remote) // TODO: Fix this as this does noting
-			remoteRepo.PruneRefs()
-		}
-		if err != nil {
-			fmt.Println("Error updating ref spec for: " + remote)
-			err = nil
-		}
-		remoteRepo.Free()
+	config = string(buffer)
+	for _, ref := range refSpecs {
+		config = strings.Replace(config, "fetch = "+ref, "", -1)
 	}
-	return nil
+	if len(wd) > 0 {
+		err = ioutil.WriteFile(wd[0]+"/config", []byte(config), 0644)
+	} else {
+		err = ioutil.WriteFile("/config", []byte(config), 0644)
+	}
+	return err
 }
 
 // GitHook is the Command with options to be added/removed from a git hook
