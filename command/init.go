@@ -35,6 +35,8 @@ Options:
 
   -terminal=true             Enable time tracking for terminal (requires Terminal plug-in).
 
+  -auto-log=""				 Enable automatic logging to commits for platform [gitlab].
+
   -tags=tag1,tag2            Add tags to projects, multiple calls appends tags.
 
   -clear-tags                Clear all tags.
@@ -45,16 +47,17 @@ Options:
 // Run executes init command with args
 func (c InitCmd) Run(args []string) int {
 	var terminal, clearTags bool
-	var tags string
+	var tags, autoLog string
 	cmdFlags := flag.NewFlagSet("init", flag.ContinueOnError)
 	cmdFlags.BoolVar(&terminal, "terminal", true, "")
+	cmdFlags.StringVar(&autoLog, "auto-log", "", "")
 	cmdFlags.BoolVar(&clearTags, "clear-tags", false, "")
 	cmdFlags.StringVar(&tags, "tags", "", "")
 	cmdFlags.Usage = func() { c.UI.Output(c.Help()) }
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
-	m, err := project.Initialize(terminal, util.Map(strings.Split(tags, ","), strings.TrimSpace), clearTags)
+	m, err := project.Initialize(terminal, util.Map(strings.Split(tags, ","), strings.TrimSpace), clearTags, autoLog)
 	if err != nil {
 		c.UI.Error(err.Error())
 		return 1

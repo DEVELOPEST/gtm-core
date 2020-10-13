@@ -43,11 +43,6 @@ var (
 			Command: "git push origin refs/notes/gtm-data --no-verify",
 			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
 		},
-		"prepare-commit-msg": {
-			Exe:     "git",
-			Command: "echo -n \"/spend \" >> $1; gtm status -total-only >> $1",
-			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*echo\s+-n\s+"/spend\s+"\s+>>\s+\$1;\s+gtm(.exe"|)\s+status\s+-total-only\s+>>\s+\$1\.*`),
-		},
 	}
 	// GitConfig is map of git configuration settingsx
 	GitConfig = map[string]string{
@@ -59,6 +54,14 @@ var (
 
 	GitFetchRefs = []string{
 		"+refs/notes/gtm-data:refs/notes/gtm-data",
+	}
+
+	GitLabHooks = map[string]scm.GitHook{
+		"prepare-commit-msg": {
+			Exe:     "git",
+			Command: "echo -n \"/spend \" >> $1; gtm status -total-only >> $1",
+			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*echo\s+-n\s+"/spend\s+"\s+>>\s+\$1;\s+gtm(.exe"|)\s+status\s+-total-only\s+>>\s+\$1\.*`),
+		},
 	}
 )
 
@@ -73,17 +76,17 @@ const initMsgTpl string = `
 {{print "Git Time Metric initialized for " (.ProjectPath) | printf (.HeaderFormat) }}
 
 {{ range $hook, $command := .GitHooks -}}
-	{{- $hook | printf "%16s" }}: {{ $command.Command }}
+	{{- $hook | printf "%20s" }}: {{ $command.Command }}
 {{ end -}}
 {{ range $key, $val := .GitConfig -}}
-	{{- $key | printf "%16s" }}: {{ $val }}
+	{{- $key | printf "%20s" }}: {{ $val }}
 {{end -}}
 {{ range $ref := .GitFetchRefs -}}
-    {{ print "add fetch ref:" | printf "%17s" }} {{ $ref}}
+    {{ print "add fetch ref:" | printf "%21s" }} {{ $ref}}
 {{end -}}
-{{ print "terminal:" | printf "%17s" }} {{ .Terminal }}
-{{ print ".gitignore:" | printf "%17s" }} {{ .GitIgnore }}
-{{ print "tags:" | printf "%17s" }} {{.Tags }}
+{{ print "terminal:" | printf "%21s" }} {{ .Terminal }}
+{{ print ".gitignore:" | printf "%21s" }} {{ .GitIgnore }}
+{{ print "tags:" | printf "%21s" }} {{.Tags }}
 `
 const removeMsgTpl string = `
 {{print "Git Time Metric uninitialized for " (.ProjectPath) | printf (.HeaderFormat) }}
@@ -91,16 +94,16 @@ const removeMsgTpl string = `
 The following items have been removed.
 
 {{ range $hook, $command := .GitHooks -}}
-	{{- $hook | printf "%16s" }}: {{ $command.Command }}
+	{{- $hook | printf "%20s" }}: {{ $command.Command }}
 {{ end -}}
 {{ range $key, $val := .GitConfig -}}
-	{{- $key | printf "%16s" }}: {{ $val }}
+	{{- $key | printf "%20s" }}: {{ $val }}
 {{end -}}
-{{ print ".gitignore:" | printf "%17s" }} {{ .GitIgnore }}
+{{ print ".gitignore:" | printf "%21s" }} {{ .GitIgnore }}
 `
 
 // Initialize initializes a git repo for time tracking
-func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
+func Initialize(terminal bool, tags []string, clearTags bool, autoLog string) (string, error) {
 	wd, err := os.Getwd()
 
 	if err != nil {
@@ -158,6 +161,13 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 	} else {
 		// try to remove terminal.app, it may not exist
 		_ = os.Remove(filepath.Join(gtmPath, "terminal.app"))
+	}
+
+	switch autoLog {
+	case "gitlab":
+		for k, v := range GitLabHooks {
+			GitHooks[k] = v
+		}
 	}
 
 	if err := scm.SetHooks(GitHooks, gitRepoPath); err != nil {
@@ -240,6 +250,9 @@ func Uninitialize() (string, error) {
 	if _, err := os.Stat(gtmPath); os.IsNotExist(err) {
 		return "", fmt.Errorf(
 			"Unable to uninitialize Git Time Metric, %s directory not found", gtmPath)
+	}
+	if err := scm.RemoveHooks(GitLabHooks, gitRepoPath); err != nil {
+		return "", err
 	}
 	if err := scm.RemoveHooks(GitHooks, gitRepoPath); err != nil {
 		return "", err
