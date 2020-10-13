@@ -70,10 +70,10 @@ jobs:
           arch: 'amd64'
           desc: 'GTM-enhanced is a time tracking app for git.'
       - uses: actions/upload-artifact@v2
-          with:
-            name: artifact-deb
-            path: |
-              ./*.deb
+        with:
+          name: artifact-deb
+          path: |
+            ./*.deb
   build-windows:
     runs-on: windows-latest
     env:
