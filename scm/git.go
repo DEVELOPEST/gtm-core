@@ -650,57 +650,29 @@ func FetchRemotesAddRefSpecs(refSpecs []string, wd ...string) error {
 
 func FetchRemotesRemoveRefSpecs(refSpecs []string, wd ...string) error {
 	var (
-		err        error
-		repo       *git.Repository
-		remotes    []string
-		remoteRepo *git.Remote
-		refs       []string
-		ref        *git.Reference
-		toRemove   bool
-		lookupRefs []string
+		buffer []byte
+		err    error
+		config string
 	)
 
 	if len(wd) > 0 {
-		repo, err = openRepository(wd[0])
+		buffer, err = ioutil.ReadFile(wd[0] + "/config")
 	} else {
-		repo, err = openRepository()
+		buffer, err = ioutil.ReadFile("/config")
 	}
 	if err != nil {
 		return err
 	}
-
-	remotes, err = repo.Remotes.List()
-	for _, remote := range remotes {
-		remoteRepo, err = repo.Remotes.Lookup(remote)
-		if err == nil {
-			refs, err = remoteRepo.FetchRefspecs()
-		}
-		if err == nil {
-			for _, refString := range refs {
-				toRemove = false
-				for _, refToRemove := range refSpecs {
-					toRemove = toRemove || refToRemove == refString
-				}
-				if !toRemove {
-					continue
-				}
-				lookupRefs = strings.Split(refString, ":")
-				if len(lookupRefs) < 2 {
-					fmt.Println("Error getting ref data: " + refString)
-				}
-				ref, err = repo.References.Lookup(lookupRefs[1]) // TODO: Apparently not found
-				if err == nil {
-					err = ref.Delete()
-				}
-			} // TODO: Fix this as this does noting
-		}
-		if err != nil {
-			fmt.Println("Error updating ref spec for: " + remote)
-			err = nil
-		}
-		remoteRepo.Free()
+	config = string(buffer)
+	for _, ref := range refSpecs {
+		config = strings.Replace(config, "fetch = "+ref, "", -1)
 	}
-	return nil
+	if len(wd) > 0 {
+		err = ioutil.WriteFile(wd[0]+"/config", []byte(config), 0644)
+	} else {
+		err = ioutil.WriteFile("/config", []byte(config), 0644)
+	}
+	return err
 }
 
 // GitHook is the Command with options to be added/removed from a git hook

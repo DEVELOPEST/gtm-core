@@ -92,8 +92,6 @@ The following items have been removed.
 	{{- $key | printf "%16s" }}: {{ $val }}
 {{end -}}
 {{ print ".gitignore:" | printf "%17s" }} {{ .GitIgnore }}
-
-Make sure to manually remove fetch refs for notes!
 `
 
 // Initialize initializes a git repo for time tracking
