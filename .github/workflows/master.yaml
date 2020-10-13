@@ -59,9 +59,10 @@ jobs:
       - name: Prepare deb package
         run: |
           mkdir -p .debpkg/usr/bin
-          cp $GOPATH/build/gtm .debpkg/usr/bin
+          cp $GOPATH/src/github.com/kilpkonn/gtm-enhanced/build/gtm .debpkg/usr/bin
           chmod +x .debpkg/usr/bin
-      - uses: jiro4989/build-deb-action@v2
+      - name: Build deb package
+        uses: jiro4989/build-deb-action@v2
         with:
           package: gtm-enhanced
           package_root: .debpkg
@@ -69,7 +70,8 @@ jobs:
           version: ${{ github.ref }} # refs/tags/v*.*.*
           arch: 'amd64'
           desc: 'GTM-enhanced is a time tracking app for git.'
-      - uses: actions/upload-artifact@v2
+      - name: Upload deb package
+        uses: actions/upload-artifact@v2
         with:
           name: artifact-deb
           path: |
