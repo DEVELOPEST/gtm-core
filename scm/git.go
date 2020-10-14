@@ -71,11 +71,13 @@ type CommitLimiter struct {
 	After      time.Time
 	Author     string
 	Message    string
+	Subdir     string
 	HasMax     bool
 	HasBefore  bool
 	HasAfter   bool
 	HasAuthor  bool
 	HasMessage bool
+	HasSubdir  bool
 }
 
 // NewCommitLimiter returns a new initialize CommitLimiter struct
@@ -295,7 +297,7 @@ func DiffParentCommit(childCommit *git.Commit) (CommitStats, error) {
 
 		path := ""
 		fileCnt := 0
-		files := []string{}
+		var files []string
 
 		err := childTree.Walk(
 			func(s string, entry *git.TreeEntry) int {
