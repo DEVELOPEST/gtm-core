@@ -32,7 +32,7 @@ func TestRecord(t *testing.T) {
 		t.Errorf("Record(%s), want error %s, got error %s", sourceFile, project.ErrNotInitialized, err)
 	}
 
-	project.Initialize(false, []string{}, false)
+	project.Initialize(false, []string{}, false, "", true)
 
 	sourceFile = filepath.Join(repo.Workdir(), "doesnotexist.go")
 	if err = Record(sourceFile); err != project.ErrFileNotFound {
