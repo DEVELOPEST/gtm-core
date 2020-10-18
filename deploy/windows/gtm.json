@@ -8,6 +8,17 @@
   "comments": "A comment describing the program",
   "installdir": "gtm",
   "license_file": "License.rtf",
+  "registry_entries": [
+    {
+      "root": "HKCU",
+      "key": "Software\\Microsoft\\gtm",
+      "action": "createAndRemoveOnUninstall",
+      "name": "SetupPath",
+      "type": "string",
+      "value": "[INSTALLDIR]",
+      "key_path": "no"
+    }
+  ],
   "parts": [
     {
       "id": "gtm",
