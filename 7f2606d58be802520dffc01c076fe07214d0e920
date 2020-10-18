@@ -1,0 +1,4 @@
+[ver:1,total:660]
+.github/workflows/develop.yaml:315,1603040400:315,m
+.github/workflows/release.yaml:225,1603040400:225,m
+command/verify.go:120,1603040400:120,r
