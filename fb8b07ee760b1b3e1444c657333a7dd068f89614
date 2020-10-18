@@ -1,0 +1,6 @@
+[ver:1,total:600]
+deploy/windows/Licence.rtf:180,1603044000:180,r
+.github/workflows/release.yaml:180,1603040400:180,r
+.gitattributes:120,1603044000:120,m
+.github/workflows/golangci-lint.yml:100,1603044000:100,m
+.github/workflows/develop.yaml:20,1603044000:20,r
