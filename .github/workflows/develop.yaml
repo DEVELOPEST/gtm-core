@@ -119,7 +119,11 @@ jobs:
           Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/deploy/windows/gtm.json" -Destination "./gtm.json"
           Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/deploy/windows/Licence.rtf" -Destination "./Licence.rtf"
           py createmsi.py gtm.json
-          dir
+      - uses: actions/upload-artifact@v2
+          with:
+            name: gtm-windows-installer
+            path: ./src/msicreator/*.msi
+
   build-macOS:
     runs-on: macos-latest
     env:
