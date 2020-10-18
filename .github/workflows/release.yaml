@@ -50,7 +50,7 @@ jobs:
           go get -v -d github.com/kilpkonn/gtm-enhanced
           cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
           mkdir build
-          go build --tags static -o build/ ./...
+          go build --tags static -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ ./...
           cd build/
           mv gtm-enhanced gtm
           chmod +x gtm
@@ -59,6 +59,12 @@ jobs:
         with:
           name: gtm-linux
           path: ./src/github.com/${{ github.repository }}/build/
+      - name: Verify version
+        run: |
+          v = "$($GOPATH/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
+          if [ ! "$v" == "true" ]; then
+            exit 1
+          fi
       - name: Prepare deb package
         run: |
           mkdir -p .debpkg/usr/bin
@@ -119,7 +125,7 @@ jobs:
           cd ./src/github.com/kilpkonn/gtm-enhanced
           new-item -Name "build" -ItemType directory
           $env:PKG_CONFIG_PATH += ";D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install\lib\pkgconfig"   
-          go build -o build/ main.go
+          go build -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ main.go
           Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./build/git2.dll"
           cd build
           dir
@@ -184,7 +190,7 @@ jobs:
           go get -v -d github.com/kilpkonn/gtm-enhanced
           cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
           mkdir build
-          go build --tags static -o build/ ./...
+          go build --tags static -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ ./...
           cd build/
           mv gtm-enhanced gtm
           chmod +x gtm
@@ -193,3 +199,9 @@ jobs:
         with:
           name: gtm-macOS
           path: ./src/github.com/${{ github.repository }}/build/
+      - name: Verify version
+        run: |
+          v = "$($GOPATH/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
+          if [ ! "$v" == "true" ]; then
+            exit 1
+          fi
