@@ -4,6 +4,7 @@ on:
     branches:
       - develop
       - master
+      - feature/CORE-22
   pull_request:
     branches:
       - develop
