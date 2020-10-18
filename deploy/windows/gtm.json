@@ -1,0 +1,20 @@
+{
+  "upgrade_guid": "YOUR-GUID-HERE",
+  "version": "0.0.0.1",
+  "product_name": "GTM Enhanced",
+  "manufacturer": "todo",
+  "name": "GTM Enhanced",
+  "name_base": "gtm",
+  "comments": "A comment describing the program",
+  "installdir": "gtm",
+  "license_file": "License.rtf",
+  "parts": [
+    {
+      "id": "gtm",
+      "title": "GTM Enhanced",
+      "description": "gtm core",
+      "absent": "disallow",
+      "staged_dir": "staging"
+    }
+  ]
+}
