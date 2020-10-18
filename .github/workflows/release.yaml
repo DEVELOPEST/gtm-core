@@ -50,7 +50,7 @@ jobs:
           go get -v -d github.com/kilpkonn/gtm-enhanced
           cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
           mkdir build
-          go build --tags static -o build/ ./...
+          go build --tags static -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ ./...
           cd build/
           mv gtm-enhanced gtm
           chmod +x gtm
@@ -59,6 +59,12 @@ jobs:
         with:
           name: gtm-linux
           path: ./src/github.com/${{ github.repository }}/build/
+      - name: Verify version
+        run: |
+          v="$(${GOPATH}/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
+          if [ ! "$v" == "true" ]; then
+            exit 1
+          fi
       - name: Prepare deb package
         run: |
           mkdir -p .debpkg/usr/bin
@@ -76,7 +82,7 @@ jobs:
       - name: Upload deb package
         uses: actions/upload-artifact@v2
         with:
-          name: debian-linux
+          name: gtm-debian
           path: |
             ./*.deb
   build-windows:
@@ -119,7 +125,7 @@ jobs:
           cd ./src/github.com/kilpkonn/gtm-enhanced
           new-item -Name "build" -ItemType directory
           $env:PKG_CONFIG_PATH += ";D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install\lib\pkgconfig"   
-          go build -o build/ main.go
+          go build -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ main.go
           Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./build/git2.dll"
           cd build
           dir
@@ -128,6 +134,29 @@ jobs:
         with:
           name: gtm-windows
           path: ./src/github.com/${{ github.repository }}/build/
+      - name: Verify version
+        run: |
+          $v = ./src/github.com/kilpkonn/gtm-enhanced/build/gtm.exe verify ${{ github.event.inputs.release_version }}
+          If ($v -eq "false") {
+            Exit 1
+          }
+      - name: Install msicreator
+        run: |
+          git clone https://github.com/jpakkane/msicreator.git
+      - name: Create windows installer
+        run: |
+          cd msicreator
+          md staging
+          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./staging/git2.dll"
+          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/build/gtm.exe" -Destination "./staging/gtm.exe"
+          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/deploy/windows/gtm.json" -Destination "./gtm.json"
+          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/deploy/windows/Licence.rtf" -Destination "./Licence.rtf"
+          (Get-Content ./gtm.json).replace('{VERSION}', '${{ github.event.inputs.release_version }}') | Set-Content ./gtm.json
+          py createmsi.py gtm.json
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gtm-windows-installer
+          path: ./msicreator/*.msi
   build-macOS:
     runs-on: macos-latest
     env:
@@ -167,7 +196,7 @@ jobs:
           go get -v -d github.com/kilpkonn/gtm-enhanced
           cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
           mkdir build
-          go build --tags static -o build/ ./...
+          go build --tags static -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ ./...
           cd build/
           mv gtm-enhanced gtm
           chmod +x gtm
@@ -176,3 +205,9 @@ jobs:
         with:
           name: gtm-macOS
           path: ./src/github.com/${{ github.repository }}/build/
+      - name: Verify version
+        run: |
+          v="$(${GOPATH}/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
+          if [ ! "$v" == "true" ]; then
+            exit 1
+          fi
