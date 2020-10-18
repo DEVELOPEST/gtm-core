@@ -61,7 +61,7 @@ jobs:
           path: ./src/github.com/${{ github.repository }}/build/
       - name: Verify version
         run: |
-          export $v = "$($GOPATH/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
+          v="$(${GOPATH}/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
           if [ ! "$v" == "true" ]; then
             exit 1
           fi
@@ -207,7 +207,7 @@ jobs:
           path: ./src/github.com/${{ github.repository }}/build/
       - name: Verify version
         run: |
-          export $v = "$($GOPATH/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
+          v="$(${GOPATH}/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
           if [ ! "$v" == "true" ]; then
             exit 1
           fi
