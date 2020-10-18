@@ -128,6 +128,23 @@ jobs:
         with:
           name: gtm-windows
           path: ./src/github.com/${{ github.repository }}/build/
+      - name: Install msicreator
+        run: |
+          git clone https://github.com/jpakkane/msicreator.git
+      - name: Create windows installer
+        run: |
+          cd msicreator
+          md staging
+          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./staging/git2.dll"
+          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/build/gtm.exe" -Destination "./staging/gtm.exe"
+          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/deploy/windows/gtm.json" -Destination "./gtm.json"
+          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/deploy/windows/Licence.rtf" -Destination "./Licence.rtf"
+          (Get-Content ./gtm.json).replace('{VERSION}', '${{ github.event.inputs.release_version }}') | Set-Content ./gtm.json
+          py createmsi.py gtm.json
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gtm-windows-installer
+          path: ./msicreator/*.msi
   build-macOS:
     runs-on: macos-latest
     env:
