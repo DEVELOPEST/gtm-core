@@ -1,0 +1,8 @@
+[ver:1,total:2160]
+.github/workflows/develop.yaml:948,1603026000:828,1603029600:120,m
+report/query.go:780,1602856800:240,1602871200:360,1602874800:180,r
+deploy/windows/gtm.json:220,1603026000:220,m
+scm/git.go:117,1602856800:90,1603026000:27,r
+.github/workflows/release.yaml:35,1603026000:35,r
+deploy/windows/Licence.rtf:30,1603026000:30,m
+command/report.go:30,1602856800:30,r
