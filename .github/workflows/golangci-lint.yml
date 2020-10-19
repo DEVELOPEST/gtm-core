@@ -53,7 +53,7 @@ jobs:
           version: v1.29
 
           # Optional: working directory, useful for monorepos
-          working-directory: github.com/kilpkonn/gtm-enhanced
+          working-directory: ${{ github.workspace }}/src/github.com/kilpkonn/gtm-enhanced
 
           # Optional: golangci-lint command line arguments.
           args: --issues-exit-code=0
