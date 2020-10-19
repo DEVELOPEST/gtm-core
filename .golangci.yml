@@ -8,7 +8,7 @@ linters-settings:
     packages-with-error-message:
       - github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
   dupl:
-    threshold: 200
+    threshold: 20
   funlen:
     lines: 150
     statements: 50
