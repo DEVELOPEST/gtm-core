@@ -56,7 +56,7 @@ jobs:
           working-directory: ${{ github.workspace }}/src/github.com/kilpkonn/gtm-enhanced
 
           # Optional: golangci-lint command line arguments.
-          args: --issues-exit-code=0
+          # args: --issues-exit-code=0
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
