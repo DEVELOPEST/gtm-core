@@ -1,0 +1,16 @@
+run:
+  # default concurrency is a available CPU number
+  concurrency: 4
+  # timeout for analysis, e.g. 30s, 5m, default is 1m
+  deadline: 2m
+  modules-download-mode: vendor
+linters:
+  disable:
+    - errcheck
+    - gochecknoglobals
+    - dupl
+  presets:
+    - bugs
+    - unused
+    - complexity
+    - style
