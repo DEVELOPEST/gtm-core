@@ -5,23 +5,11 @@
 package util
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
 	"github.com/jinzhu/now"
 )
-
-func printDates() {
-	fmt.Printf("%+10s %s\n", "Today", TodayRange())
-	fmt.Printf("%+10s %s\n", "Yesterday", YesterdayRange())
-	fmt.Printf("%+10s %s\n", "ThisWeek", ThisWeekRange())
-	fmt.Printf("%+10s %s\n", "LastWeek", LastWeekRange())
-	fmt.Printf("%+10s %s\n", "ThisMonth", ThisMonthRange())
-	fmt.Printf("%+10s %s\n", "LastMonth", LastMonthRange())
-	fmt.Printf("%+10s %s\n", "ThisYear", ThisYearRange())
-	fmt.Printf("%+10s %s\n", "LastYear", LastYearRange())
-}
 
 func TestDateRanges(t *testing.T) {
 	tm, err := time.Parse("2006-Jan-02", "2015-Jul-01")

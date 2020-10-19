@@ -8,7 +8,7 @@ linters-settings:
     packages-with-error-message:
       - github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
   dupl:
-    threshold: 100
+    threshold: 200
   funlen:
     lines: 150
     statements: 50
@@ -16,7 +16,7 @@ linters-settings:
     local-prefixes: github.com/golangci/golangci-lint
   goconst:
     min-len: 2
-    min-occurrences: 2
+    min-occurrences: 3
   gocritic:
     enabled-tags:
       - diagnostic
