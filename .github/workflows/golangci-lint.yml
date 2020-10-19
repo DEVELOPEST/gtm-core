@@ -42,8 +42,12 @@ jobs:
           sudo make install
           cd ../../..
           make install-static
+          go get -v -d github.com/kilpkonn/gtm-enhanced
+          cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+          mkdir build
+          go build --tags static -o build/ ./...
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v1
+        uses: golangci/golangci-lint-action@v2
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
           version: v1.29
