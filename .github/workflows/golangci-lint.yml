@@ -24,6 +24,9 @@ jobs:
         with:
           path: ./src/github.com/${{ github.repository }}
           submodules: true
+      - name: Install apt dependecies
+        run: |
+          sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
       - name: Install go dependencies
         run: |
           go get -d github.com/Masterminds/sprig
