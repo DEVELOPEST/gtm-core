@@ -1,0 +1,4 @@
+[ver:1,total:180]
+.github/workflows/golangci-lint.yml:80,1603216800:80,r
+.github/workflows/release.yaml:60,1603216800:60,m
+.github/workflows/develop.yaml:40,1603216800:40,m
