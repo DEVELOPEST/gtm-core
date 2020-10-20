@@ -41,7 +41,6 @@ jobs:
           mkdir build && cd build
           cmake ..
           make
-          sudo make install
           cd ../../..
           make install-static
           cd $GOPATH
@@ -187,7 +186,6 @@ jobs:
           mkdir build && cd build
           cmake ..
           make
-          sudo make install
           cd ../../..
           make install-static
           cd $GOPATH
