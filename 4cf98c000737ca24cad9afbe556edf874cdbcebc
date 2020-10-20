@@ -1,0 +1,5 @@
+[ver:1,total:420]
+.golangci.yml:180,1603213200:180,m
+command/report.go:120,1603216800:120,r
+command/clean.go:80,1603216800:80,m
+.github/workflows/golangci-lint.yml:40,1603216800:40,m
