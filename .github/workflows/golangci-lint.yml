@@ -51,5 +51,6 @@ jobs:
         with:
           # Can pass --config flag to change golangci-lint behavior and target
           # directory.
+          reviewdog_flags: '-reporter=github-pr-check'
           golangci_lint_flags: "--config=.golangci.yml"
           workdir: src/github.com/kilpkonn/gtm-enhanced
