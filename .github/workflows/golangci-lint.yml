@@ -31,7 +31,6 @@ jobs:
         run: |
           go get -d github.com/Masterminds/sprig
       - name: Install git2go
-        if: steps.cache-libgit2.outputs.cache-hit != 'true'
         run: |
           go get -d github.com/libgit2/git2go
           cd $GOPATH/src/github.com/libgit2/git2go
