@@ -39,7 +39,6 @@ jobs:
           mkdir build && cd build
           cmake ..
           make
-          sudo make install
           cd ../../..
           make install-static
           go get -v -d github.com/kilpkonn/gtm-enhanced
