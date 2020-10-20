@@ -30,7 +30,17 @@ jobs:
       - name: Install go dependencies
         run: |
           go get -d github.com/Masterminds/sprig
+      - name: Cache libgit2
+          id: cache-libgit2
+          uses: actions/cache@v2
+          with:
+            path: |
+              /usr/local/lib/pkgconfig/libgit2.pc
+              /usr/local/lib/libgit2.*
+              /usr/local/include/git2*
+            key: ${{ runner.os }}-libgit2
       - name: Install git2go
+        if: steps.cache-libgit2.outputs.cache-hit != 'true'
         run: |
           go get -d github.com/libgit2/git2go
           cd $GOPATH/src/github.com/libgit2/git2go
