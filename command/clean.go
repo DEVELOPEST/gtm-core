@@ -76,3 +76,7 @@ func (c CleanCmd) Run(args []string) int {
 func (c CleanCmd) Synopsis() string {
 	return "Delete pending time data"
 }
+
+func test() int {
+	return 0
+}
