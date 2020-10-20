@@ -52,4 +52,4 @@ jobs:
           # Can pass --config flag to change golangci-lint behavior and target
           # directory.
           golangci_lint_flags: "--config=.golangci.yml"
-          workdir: ${{ github.workspace }}/src/github.com/kilpkonn/gtm-enhanced
+          workdir: src/github.com/kilpkonn/gtm-enhanced
