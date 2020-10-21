@@ -164,7 +164,7 @@ func eventToFile(event string, eventType string, cwd ...string) string {
 	}
 	var file = filepath.Join(projPath, ".gtm", event+"."+eventType)
 	if _, err := os.Stat(file); os.IsNotExist(err) {
-		ioutil.WriteFile(
+		_ = ioutil.WriteFile(
 			file,
 			[]byte{},
 			0644)
