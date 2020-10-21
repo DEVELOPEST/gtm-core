@@ -40,8 +40,6 @@ jobs:
           cd vendor/libgit2
           mkdir build && cd build
           cmake ..
-          make
-          sudo make install
           cd ../../..
           make install-static
           cd $GOPATH
@@ -186,8 +184,6 @@ jobs:
           cd vendor/libgit2
           mkdir build && cd build
           cmake ..
-          make
-          sudo make install
           cd ../../..
           make install-static
           cd $GOPATH
