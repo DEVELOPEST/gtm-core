@@ -1,0 +1,10 @@
+[ver:1,total:2040]
+metric/manager.go:670,1603303200:670,r
+metric/metric.go:300,1603303200:300,r
+command/record.go:280,1603303200:280,m
+event/manager.go:200,1603303200:200,r
+command/init.go:180,1603303200:180,r
+note/note.go:125,1603303200:125,m
+command/commit.go:125,1603303200:125,r
+.gtm/abc--yes.app:100,1603303200:100,r
+event/app.go:60,1603303200:60,d
