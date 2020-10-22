@@ -56,9 +56,9 @@ func TestGitRepoPath(t *testing.T) {
 
 	saveDir, err := os.Getwd()
 	util.CheckFatal(t, err)
-	defer os.Chdir(saveDir)
+	_ = os.Chdir(saveDir)
 
-	os.Chdir(repo.Path())
+	_ = os.Chdir(repo.Path())
 	gotPath, err = GitRepoPath()
 	if err != nil {
 		t.Errorf("GitRepoPath error, %s", err)
