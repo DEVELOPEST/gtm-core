@@ -116,23 +116,23 @@ func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, lo
 	gitRepoPath, err := scm.GitRepoPath(wd)
 	if err != nil {
 		return "", fmt.Errorf(
-			"Unable to intialize Git Time Metric, Git repository not found in '%s'", gitRepoPath)
+			"Unable to initialize Git Time Metric, Git repository not found in '%s'", gitRepoPath)
 	}
 	if _, err := os.Stat(gitRepoPath); os.IsNotExist(err) {
 		return "", fmt.Errorf(
-			"Unable to intialize Git Time Metric, Git repository not found in %s", gitRepoPath)
+			"Unable to initialize Git Time Metric, Git repository not found in %s", gitRepoPath)
 	}
 
 	workDirRoot, err := scm.Workdir(gitRepoPath)
 	if err != nil {
 		return "", fmt.Errorf(
-			"Unable to intialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
+			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
 
 	}
 
 	if _, err := os.Stat(workDirRoot); os.IsNotExist(err) {
 		return "", fmt.Errorf(
-			"Unable to intialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
+			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
 	}
 
 	gtmPath := filepath.Join(workDirRoot, GTMDir)
@@ -250,7 +250,7 @@ func Uninitialize() (string, error) {
 	gitRepoPath, err := scm.GitRepoPath(wd)
 	if err != nil {
 		return "", fmt.Errorf(
-			"Unable to unintialize Git Time Metric, Git repository not found in %s", gitRepoPath)
+			"Unable to uninitialize Git Time Metric, Git repository not found in %s", gitRepoPath)
 	}
 
 	workDir, _ := scm.Workdir(gitRepoPath)
