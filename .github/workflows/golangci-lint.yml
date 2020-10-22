@@ -38,8 +38,8 @@ jobs:
           cd vendor/libgit2
           mkdir build && cd build
           cmake ..
-          cd ../../..
-          make install-static
+          make
+          sudo make install
           go get -v -d github.com/kilpkonn/gtm-enhanced
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v1
