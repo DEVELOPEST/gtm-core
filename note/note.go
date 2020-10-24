@@ -201,7 +201,7 @@ func (f *FileDetail) ShortenSourceFile(n int) string {
 
 // SortEpochs returns timeline keys sorted by epoch
 func (f *FileDetail) SortEpochs() []int64 {
-	keys := []int64{}
+	var keys []int64
 	for k := range f.Timeline {
 		keys = append(keys, k)
 	}

@@ -1,0 +1,52 @@
+name: Reviewdog
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+    branches:
+      - develop
+      - master
+jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: auto
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15.x
+      - uses: actions/checkout@v2
+        with:
+          path: ./src/github.com/${{ github.repository }}
+          submodules: true
+      - name: Install apt dependecies
+        run: |
+          sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
+      - name: Install go dependencies
+        run: |
+          go get -d github.com/Masterminds/sprig
+      - name: Install git2go
+        run: |
+          go get -d github.com/libgit2/git2go
+          cd $GOPATH/src/github.com/libgit2/git2go
+          git submodule update --init # get libgit2
+          cd vendor/libgit2
+          mkdir build && cd build
+          cmake ..
+          make
+          sudo make install
+          go get -v -d github.com/kilpkonn/gtm-enhanced
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v1
+        with:
+          # Can pass --config flag to change golangci-lint behavior and target
+          # directory.
+          tool_name: Reviewdog
+          reporter: github-pr-check
+          golangci_lint_flags: "--config=.golangci.yml"
+          workdir: src/github.com/kilpkonn/gtm-enhanced

@@ -62,23 +62,17 @@ Options:
   -long-duration=false       Return total time recorded in long duration format.
 
   -app=false [event_name]    Record an app event.
-
-  -run=false [app_name]		 Record run event.
-
-  -build=false [app_name] 	 Record build event.
 `
 	return strings.TrimSpace(helpText)
 }
 
 // Run executes record command with args
 func (c RecordCmd) Run(args []string) int {
-	var status, terminal, run, build, longDuration, app bool
+	var status, terminal, longDuration, app bool
 	var cwd string
 	cmdFlags := flag.NewFlagSet("record", flag.ContinueOnError)
 	cmdFlags.BoolVar(&status, "status", false, "")
 	cmdFlags.BoolVar(&terminal, "terminal", false, "")
-	cmdFlags.BoolVar(&run, "run", false, "")
-	cmdFlags.BoolVar(&build, "build", false, "")
 	cmdFlags.BoolVar(&longDuration, "long-duration", false, "")
 	cmdFlags.BoolVar(&app, "app", false, "")
 	cmdFlags.StringVar(&cwd, "cwd", "", "")
@@ -95,10 +89,6 @@ func (c RecordCmd) Run(args []string) int {
 	var fileToRecord string
 	if terminal {
 		fileToRecord = c.appToFile("terminal", cwd)
-	} else if run {
-		fileToRecord = c.runToFile(strings.ToLower(strings.Join(cmdFlags.Args(), "-")), cwd)
-	} else if build {
-		fileToRecord = c.buildToFile(strings.ToLower(strings.Join(cmdFlags.Args(), "-")), cwd)
 	} else if app {
 		fileToRecord = c.appToFile(strings.ToLower(strings.Join(cmdFlags.Args(), "-")), cwd) // TODO: list of configurable allowed options
 	} else {
@@ -160,20 +150,6 @@ func (c RecordCmd) appToFile(appName string, cwd string) string {
 	return eventToFile(appName, "app", cwd)
 }
 
-func (c RecordCmd) runToFile(appName string, cwd string) string {
-	if len(cwd) <= 0 {
-		return eventToFile(appName, "run")
-	}
-	return eventToFile(appName, "run", cwd)
-}
-
-func (c RecordCmd) buildToFile(appName string, cwd string) string {
-	if len(cwd) <= 0 {
-		return eventToFile(appName, "build")
-	}
-	return eventToFile(appName, "build", cwd)
-}
-
 func eventToFile(event string, eventType string, cwd ...string) string {
 	if !(len(event) > 0) {
 		return ""
@@ -188,7 +164,7 @@ func eventToFile(event string, eventType string, cwd ...string) string {
 	}
 	var file = filepath.Join(projPath, ".gtm", event+"."+eventType)
 	if _, err := os.Stat(file); os.IsNotExist(err) {
-		ioutil.WriteFile(
+		_ = ioutil.WriteFile(
 			file,
 			[]byte{},
 			0644)
