@@ -200,7 +200,7 @@ func CommitIDs(limiter CommitLimiter, wd ...string) ([]string, error) {
 		w    *git.RevWalk
 		err  error
 	)
-	commits := []string{}
+	var commits []string
 
 	if len(wd) > 0 {
 		repo, err = openRepository(wd[0])
@@ -480,6 +480,7 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 		repo   *git.Repository
 		commit *git.Commit
 		n      *git.Note
+		notes  [][]string
 	)
 
 	if len(wd) > 0 {
@@ -514,12 +515,27 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 		return CommitNote{}, err
 	}
 
+	r := regexp.MustCompile("commit ([\\dabcdef]*)\\n")
+	notes = r.FindAllStringSubmatch(commit.Message(), -1)
+
 	var noteTxt string
 	n, err = repo.Notes.Read("refs/notes/"+nameSpace, id)
 	if err != nil {
 		noteTxt = ""
 	} else {
 		noteTxt = n.Message()
+	}
+
+	for _, note := range notes {
+		noteId, err := git.NewOid(note[1])
+		if err == nil {
+			n, err = repo.Notes.Read("refs/notes/"+nameSpace, noteId)
+		}
+		if err != nil {
+			continue
+		}
+		noteTxt += "\n" + n.Message()
+
 	}
 
 	stats := CommitStats{}

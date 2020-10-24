@@ -30,7 +30,6 @@ func retrieveNotes(projects []ProjectCommits, terminalOff, appOff, calcStats boo
 
 	for _, p := range projects {
 		for _, c := range p.Commits {
-
 			n, err := scm.ReadNote(c, project.NoteNameSpace, calcStats, p.Path)
 			if err != nil {
 				notes = append(notes, commitNoteDetail{})

@@ -81,7 +81,7 @@ func Marshal(n CommitNote) string {
 func UnMarshal(s string) (CommitNote, error) {
 	var (
 		version string
-		files   = []FileDetail{}
+		files   []FileDetail
 	)
 
 	reHeader := regexp.MustCompile(`\[ver:\d+,total:\d+]`)
