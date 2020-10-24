@@ -474,7 +474,8 @@ type CommitNote struct {
 	Stats   CommitStats
 }
 
-// ReadNote returns a commit note for the SHA1 commit id, tries to fetch squashed commits notes as well by message
+// ReadNote returns a commit note for the SHA1 commit id,
+// tries to fetch squashed commits notes as well by message
 func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (CommitNote, error) {
 	var (
 		err    error
@@ -516,7 +517,7 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 		return CommitNote{}, err
 	}
 
-	r := regexp.MustCompile("commit ([\\dabcdef]*)\\n")
+	r := regexp.MustCompile(`commit ([\dabcdef]*)\n`)
 	notes = r.FindAllStringSubmatch(commit.Message(), -1)
 
 	var noteTxt string
@@ -528,9 +529,9 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 	}
 
 	for _, note := range notes {
-		noteId, err := git.NewOid(note[1])
+		noteID, err := git.NewOid(note[1])
 		if err == nil {
-			n, err = repo.Notes.Read("refs/notes/"+nameSpace, noteId)
+			n, err = repo.Notes.Read("refs/notes/"+nameSpace, noteID)
 		}
 		if err != nil {
 			continue
