@@ -106,8 +106,16 @@ The following items have been removed.
 `
 
 // Initialize initializes a git repo for time tracking
-func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, local bool) (string, error) {
-	wd, err := os.Getwd()
+func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, local bool, cwd string) (string, error) {
+	var (
+		wd  string
+		err error
+	)
+	if cwd == "" {
+		wd, err = os.Getwd()
+	} else {
+		wd = cwd
+	}
 
 	if err != nil {
 		return "", err
@@ -423,7 +431,7 @@ func removeTags(gtmPath string) error {
 
 // LoadTags returns the tags for the project in the gtmPath directory
 func LoadTags(gtmPath string) ([]string, error) {
-	tags := []string{}
+	var tags []string
 	files, err := ioutil.ReadDir(gtmPath)
 	if err != nil {
 		return []string{}, err
@@ -442,7 +450,8 @@ func saveTags(tags []string, gtmPath string) error {
 			if strings.TrimSpace(t) == "" {
 				continue
 			}
-			if err := ioutil.WriteFile(filepath.Join(gtmPath, fmt.Sprintf("%s.tag", t)), []byte(""), 0644); err != nil {
+			if err := ioutil.WriteFile(
+				filepath.Join(gtmPath, fmt.Sprintf("%s.tag", t)), []byte(""), 0644); err != nil {
 				return err
 			}
 		}

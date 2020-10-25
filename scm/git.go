@@ -185,7 +185,8 @@ func (m CommitLimiter) filter(c *git.Commit, cnt int) (bool, bool, error) {
 		return false, false, nil
 	}
 
-	if m.HasMessage && !(strings.Contains(c.Summary(), m.Message) || strings.Contains(c.Message(), m.Message)) {
+	if m.HasMessage &&
+		!(strings.Contains(c.Summary(), m.Message) || strings.Contains(c.Message(), m.Message)) {
 		return false, false, nil
 	}
 
@@ -200,7 +201,7 @@ func CommitIDs(limiter CommitLimiter, wd ...string) ([]string, error) {
 		w    *git.RevWalk
 		err  error
 	)
-	commits := []string{}
+	var commits []string
 
 	if len(wd) > 0 {
 		repo, err = openRepository(wd[0])
@@ -345,7 +346,7 @@ func DiffParentCommit(childCommit *git.Commit) (CommitStats, error) {
 		}
 	}()
 
-	files := []string{}
+	var files []string
 	err = diff.ForEach(
 		func(delta git.DiffDelta, progress float64) (git.DiffForEachHunkCallback, error) {
 			// these should only be files that have changed
@@ -473,13 +474,15 @@ type CommitNote struct {
 	Stats   CommitStats
 }
 
-// ReadNote returns a commit note for the SHA1 commit id
+// ReadNote returns a commit note for the SHA1 commit id,
+// tries to fetch squashed commits notes as well by message
 func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (CommitNote, error) {
 	var (
 		err    error
 		repo   *git.Repository
 		commit *git.Commit
 		n      *git.Note
+		notes  [][]string
 	)
 
 	if len(wd) > 0 {
@@ -514,12 +517,27 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 		return CommitNote{}, err
 	}
 
+	r := regexp.MustCompile(`commit ([\dabcdef]*)\n`)
+	notes = r.FindAllStringSubmatch(commit.Message(), -1)
+
 	var noteTxt string
 	n, err = repo.Notes.Read("refs/notes/"+nameSpace, id)
 	if err != nil {
 		noteTxt = ""
 	} else {
 		noteTxt = n.Message()
+	}
+
+	for _, note := range notes {
+		noteID, err := git.NewOid(note[1])
+		if err == nil {
+			n, err = repo.Notes.Read("refs/notes/"+nameSpace, noteID)
+		}
+		if err != nil {
+			continue
+		}
+		noteTxt += "\n" + n.Message()
+
 	}
 
 	stats := CommitStats{}
