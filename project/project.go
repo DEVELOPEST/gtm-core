@@ -450,7 +450,8 @@ func saveTags(tags []string, gtmPath string) error {
 			if strings.TrimSpace(t) == "" {
 				continue
 			}
-			if err := ioutil.WriteFile(filepath.Join(gtmPath, fmt.Sprintf("%s.tag", t)), []byte(""), 0644); err != nil {
+			if err := ioutil.WriteFile(
+				filepath.Join(gtmPath, fmt.Sprintf("%s.tag", t)), []byte(""), 0644); err != nil {
 				return err
 			}
 		}
