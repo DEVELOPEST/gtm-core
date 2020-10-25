@@ -65,10 +65,14 @@ func (n CommitNote) Total() int {
 
 // Marshal converts a commit note to a serialized string
 func Marshal(n CommitNote) string {
+	var (
+		filePath string
+	)
 	s := fmt.Sprintf("[ver:%s,total:%d]\n", "1", n.Total())
 	for _, fl := range n.Files {
 		// nomralize file paths to unix convention
-		s += fmt.Sprintf("%s:%d,", filepath.ToSlash(fl.SourceFile), fl.TimeSpent)
+		filePath = strings.Replace(fl.SourceFile, ":", "->", -1)
+		s += fmt.Sprintf("%s:%d,", filepath.ToSlash(filePath), fl.TimeSpent)
 		for _, e := range fl.SortEpochs() {
 			s += fmt.Sprintf("%d:%d,", e, fl.Timeline[e])
 		}
@@ -116,7 +120,7 @@ func UnMarshal(s string) (CommitNote, error) {
 				switch {
 				case groupIdx == 0 && len(fieldVals) == 2:
 					// file name and total, filename:total
-					filePath = fieldVals[0]
+					filePath = strings.Replace(fieldVals[0], "->", ":", -1)
 					t, err := strconv.Atoi(fieldVals[1])
 					if err != nil {
 						return CommitNote{}, fmt.Errorf("Unable to unmarshal time logged, format invalid, %s", err)
