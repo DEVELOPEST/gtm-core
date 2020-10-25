@@ -124,7 +124,7 @@ func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, lo
 	gitRepoPath, err := scm.GitRepoPath(wd)
 	if err != nil {
 		return "", fmt.Errorf(
-			"Unable to initialize Git Time Metric, Git repository not found in '%s'", gitRepoPath)
+			"Unable to initialize Git Time Metric, Git repository not found in '%s'", wd)
 	}
 	if _, err := os.Stat(gitRepoPath); os.IsNotExist(err) {
 		return "", fmt.Errorf(
