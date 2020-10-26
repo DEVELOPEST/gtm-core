@@ -1,0 +1,5 @@
+[ver:1,total:1440]
+.gtm/python-> commit_test.app:720,1603641600:720,r
+command/record.go:300,1603648800:240,1603735200:60,m
+note/note.go:240,1603641600:240,r
+main.go:180,1603641600:180,r
