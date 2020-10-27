@@ -27,6 +27,8 @@ func main() {
 	}
 	c := cli.NewCLI("gtm", Version)
 	c.Args = os.Args[1:]
+	c.HelpWriter = os.Stdout
+	c.ErrorWriter = os.Stderr
 	c.Commands = map[string]cli.CommandFactory{
 		"init": func() (cli.Command, error) {
 			return &command.InitCmd{
