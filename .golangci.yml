@@ -93,7 +93,6 @@ linters:
     - nolintlint
     - rowserrcheck
     - scopelint
-    - staticcheck
     - structcheck
     - typecheck
     - unconvert

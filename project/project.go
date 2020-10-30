@@ -109,7 +109,14 @@ The following items have been removed.
 `
 
 // Initialize initializes a git repo for time tracking
-func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, local bool, cwd string) (string, error) {
+func Initialize(
+	terminal bool,
+	tags []string,
+	clearTags bool,
+	autoLog string,
+	local bool,
+	cwd string,
+) (string, error) {
 	var (
 		wd  string
 		err error
@@ -235,7 +242,7 @@ func SetupTags(err error, tags []string, gtmPath string) ([]string, error) {
 	return tags, nil
 }
 
-func SetUpPaths(cwd, wd string, err error) (gitRepoPath string, workDirRoot string, gtmPath string, error error) {
+func SetUpPaths(cwd, wd string, err error) (gitRepoPath, workDirRoot, gtmPath string, setupError error) {
 	if cwd == "" {
 		wd, err = os.Getwd()
 	} else {
