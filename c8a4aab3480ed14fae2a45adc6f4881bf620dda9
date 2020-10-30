@@ -1,0 +1,4 @@
+[ver:1,total:900]
+project/project.go:520,1604084400:520,m
+scm/git.go:320,1604084400:320,r
+.golangci.yml:60,1604084400:60,m
