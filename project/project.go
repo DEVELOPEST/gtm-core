@@ -242,7 +242,8 @@ func SetupTags(err error, tags []string, gtmPath string) ([]string, error) {
 	return tags, nil
 }
 
-func SetUpPaths(cwd, wd string, err error) (gitRepoPath, workDirRoot, gtmPath string, setupError error) {
+func SetUpPaths(cwd, wd string, err error) (
+	gitRepoPath, workDirRoot, gtmPath string, setupError error) {
 	if cwd == "" {
 		wd, err = os.Getwd()
 	} else {
