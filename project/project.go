@@ -198,7 +198,7 @@ func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, lo
 	return b.String(), nil
 }
 
-func SetupHooks(local bool, gitRepoPath string, autoLog string) error {
+func SetupHooks(local bool, gitRepoPath, autoLog string) error {
 	if !local {
 		if err := scm.FetchRemotesAddRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
 			return err
@@ -232,10 +232,10 @@ func SetupTags(err error, tags []string, gtmPath string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	return tags, err
+	return tags, nil
 }
 
-func SetUpPaths(cwd, wd string, err error) (string, string, string, error) {
+func SetUpPaths(cwd, wd string, err error) (gitRepoPath string, workDirRoot string, gtmPath string, error error) {
 	if cwd == "" {
 		wd, err = os.Getwd()
 	} else {
@@ -246,7 +246,7 @@ func SetUpPaths(cwd, wd string, err error) (string, string, string, error) {
 		return "", "", "", err
 	}
 
-	gitRepoPath, err := scm.GitRepoPath(wd)
+	gitRepoPath, err = scm.GitRepoPath(wd)
 	if err != nil {
 		return "", "", "", fmt.Errorf(
 			"Unable to initialize Git Time Metric, Git repository not found in '%s'", wd)
@@ -256,7 +256,7 @@ func SetUpPaths(cwd, wd string, err error) (string, string, string, error) {
 			"Unable to initialize Git Time Metric, Git repository not found in %s", gitRepoPath)
 	}
 
-	workDirRoot, err := scm.Workdir(gitRepoPath)
+	workDirRoot, err = scm.Workdir(gitRepoPath)
 	if err != nil {
 		return "", "", "", fmt.Errorf(
 			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
@@ -268,7 +268,7 @@ func SetUpPaths(cwd, wd string, err error) (string, string, string, error) {
 			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
 	}
 
-	gtmPath := filepath.Join(workDirRoot, GTMDir)
+	gtmPath = filepath.Join(workDirRoot, GTMDir)
 	if _, err := os.Stat(gtmPath); os.IsNotExist(err) {
 		if err := os.MkdirAll(gtmPath, 0700); err != nil {
 			return "", "", "", err

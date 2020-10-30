@@ -85,8 +85,6 @@ linters:
     - gomnd
     - goprintffuncname
     - gosimple
-    - govet
-    - ineffassign
     - interfacer
     - lll
     - misspell
