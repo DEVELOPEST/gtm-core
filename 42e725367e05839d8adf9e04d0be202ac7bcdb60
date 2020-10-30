@@ -1,0 +1,9 @@
+[ver:1,total:1560]
+project/project.go:710,1604084400:710,m
+scm/git.go:315,1604084400:315,m
+report/report.go:260,1604084400:260,m
+report/query.go:120,1604084400:120,m
+.github/workflows/develop.yaml:60,1604084400:60,r
+command/init.go:50,1604084400:50,m
+command/record.go:30,1604084400:30,m
+.golangci.yml:15,1604084400:15,m
