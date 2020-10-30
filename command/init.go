@@ -34,16 +34,11 @@ Usage: gtm init [options]
 Options:
 
   -terminal=true             Enable time tracking for terminal (requires Terminal plug-in).
-
-  -auto-log=""				 Enable automatic logging to commits for platform [gitlab].
-
-  -local=false				 Initialize gtm locally, ak no push / fetch hooks are added.
-
+  -auto-log=""               Enable automatic logging to commits for platform [gitlab].
+  -local=false               Initialize gtm locally, ak no push / fetch hooks are added.
   -tags=tag1,tag2            Add tags to projects, multiple calls appends tags.
-
   -clear-tags                Clear all tags.
-
-  -cwd=""					 Add directory where command is run in.
+  -cwd=""                    Add directory where command is run in.
 `
 	return strings.TrimSpace(helpText)
 }

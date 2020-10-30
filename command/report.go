@@ -57,7 +57,7 @@ Options:
   -to-date=yyyy-mm-dd        Show commits thru the end of this date
   -author=""                 Show commits which contain author substring
   -message=""                Show commits which contain message substring
-  -subdir=""				 Show commits that are in subdirectory
+  -subdir=""                 Show commits that are in subdirectory
   -today=false               Show commits for today
   -yesterday=false           Show commits for yesterday
   -this-week=false           Show commits for this week

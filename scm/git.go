@@ -517,8 +517,9 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 		return CommitNote{}, err
 	}
 
-	r := regexp.MustCompile(`commit ([\dabcdef]*)\n`)
-	notes = r.FindAllStringSubmatch(commit.Message(), -1)
+	r := regexp.MustCompile(`commit\s+([\dabcdef]*)\r?\n`)
+	msg := commit.Message()
+	notes = r.FindAllStringSubmatch(msg, -1)
 
 	var noteTxt string
 	n, err = repo.Notes.Read("refs/notes/"+nameSpace, id)
