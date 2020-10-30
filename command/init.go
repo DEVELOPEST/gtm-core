@@ -58,7 +58,14 @@ func (c InitCmd) Run(args []string) int {
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
-	m, err := project.Initialize(terminal, util.Map(strings.Split(tags, ","), strings.TrimSpace), clearTags, autoLog, local, cwd)
+	m, err := project.Initialize(
+		terminal,
+		util.Map(strings.Split(tags, ","), strings.TrimSpace),
+		clearTags,
+		autoLog,
+		local,
+		cwd,
+	)
 	if err != nil {
 		c.UI.Error(err.Error())
 		return 1

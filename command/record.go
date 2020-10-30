@@ -90,7 +90,7 @@ func (c RecordCmd) Run(args []string) int {
 	if terminal {
 		fileToRecord = c.appToFile("terminal", cwd)
 	} else if app {
-		fileToRecord = c.appToFile(strings.Join(cmdFlags.Args(), "-"), cwd) // TODO: list of configurable allowed options
+		fileToRecord = c.appToFile(strings.Join(cmdFlags.Args(), "-"), cwd)
 	} else {
 		fileToRecord = cmdFlags.Args()[0]
 	}

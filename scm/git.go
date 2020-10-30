@@ -525,6 +525,7 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 	n, err = repo.Notes.Read("refs/notes/"+nameSpace, id)
 	if err != nil {
 		noteTxt = ""
+		err = nil
 	} else {
 		noteTxt = n.Message()
 	}
@@ -646,6 +647,10 @@ func FetchRemotesAddRefSpecs(refSpecs []string, wd ...string) error {
 	}
 
 	remotes, err = repo.Remotes.List()
+	if err != nil {
+		return err
+	}
+
 	for _, remote := range remotes {
 		for _, refSpec := range refSpecs {
 			remoteRepo, err = repo.Remotes.Lookup(remote)
@@ -661,7 +666,7 @@ func FetchRemotesAddRefSpecs(refSpecs []string, wd ...string) error {
 			}
 			if err != nil {
 				fmt.Println("Error updating ref spec for: " + remote)
-				err = nil
+				return err
 			}
 			remoteRepo.Free()
 		}

@@ -84,7 +84,6 @@ linters:
     - golint
     - gomnd
     - goprintffuncname
-    - gosec
     - gosimple
     - govet
     - ineffassign
@@ -98,7 +97,6 @@ linters:
     - scopelint
     - staticcheck
     - structcheck
-    - stylecheck
     - typecheck
     - unconvert
     - unparam
