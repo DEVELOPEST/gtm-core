@@ -36,15 +36,39 @@ var (
 		"post-commit": {
 			Exe:     "gtm",
 			Command: "gtm commit --yes",
-			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`)},
+			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`),
+		},
 	}
-	// GitConfig is map of git configuration settings
+	// GitConfig is map of git configuration settingsx
 	GitConfig = map[string]string{
 		"alias.pushgtm":    "push origin refs/notes/gtm-data",
 		"alias.fetchgtm":   "fetch origin refs/notes/gtm-data:refs/notes/gtm-data",
 		"notes.rewriteref": "refs/notes/gtm-data"}
 	// GitIgnore is file ignore to apply to git repo
 	GitIgnore = "/.gtm/"
+
+	GitFetchRefs = []string{
+		"+refs/notes/gtm-data:refs/notes/gtm-data",
+	}
+
+	GitPushRefsHooks = map[string]scm.GitHook{
+		"pre-push": {
+			Exe:     "git",
+			Command: "git push origin refs/notes/gtm-data --no-verify",
+			RE: regexp.MustCompile(
+				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
+		},
+	}
+
+	GitLabHooks = map[string]scm.GitHook{
+		"prepare-commit-msg": {
+			Exe:     "git",
+			Command: "echo -n \"/spend \" >> $1; gtm status -total-only >> $1",
+			RE: regexp.MustCompile(
+				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*echo\s+-n\s+"/spend\s+"\s+>>\s+\$1;` +
+					`\s+gtm(.exe"|)\s+status\s+-total-only\s+>>\s+\$1\.*`),
+		},
+	}
 )
 
 const (
@@ -58,14 +82,17 @@ const initMsgTpl string = `
 {{print "Git Time Metric initialized for " (.ProjectPath) | printf (.HeaderFormat) }}
 
 {{ range $hook, $command := .GitHooks -}}
-	{{- $hook | printf "%16s" }}: {{ $command.Command }}
+	{{- $hook | printf "%20s" }}: {{ $command.Command }}
 {{ end -}}
 {{ range $key, $val := .GitConfig -}}
-	{{- $key | printf "%16s" }}: {{ $val }}
+	{{- $key | printf "%20s" }}: {{ $val }}
 {{end -}}
-{{ print "terminal:" | printf "%17s" }} {{ .Terminal }}
-{{ print ".gitignore:" | printf "%17s" }} {{ .GitIgnore }}
-{{ print "tags:" | printf "%17s" }} {{.Tags }}
+{{ range $ref := .GitFetchRefs -}}
+    {{ print "add fetch ref:" | printf "%21s" }} {{ $ref}}
+{{end -}}
+{{ print "terminal:" | printf "%21s" }} {{ .Terminal }}
+{{ print ".gitignore:" | printf "%21s" }} {{ .GitIgnore }}
+{{ print "tags:" | printf "%21s" }} {{.Tags }}
 `
 const removeMsgTpl string = `
 {{print "Git Time Metric uninitialized for " (.ProjectPath) | printf (.HeaderFormat) }}
@@ -73,49 +100,30 @@ const removeMsgTpl string = `
 The following items have been removed.
 
 {{ range $hook, $command := .GitHooks -}}
-	{{- $hook | printf "%16s" }}: {{ $command.Command }}
+	{{- $hook | printf "%20s" }}: {{ $command.Command }}
 {{ end -}}
 {{ range $key, $val := .GitConfig -}}
-	{{- $key | printf "%16s" }}: {{ $val }}
+	{{- $key | printf "%20s" }}: {{ $val }}
 {{end -}}
-{{ print ".gitignore:" | printf "%17s" }} {{ .GitIgnore }}
+{{ print ".gitignore:" | printf "%21s" }} {{ .GitIgnore }}
 `
 
 // Initialize initializes a git repo for time tracking
-func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
-	wd, err := os.Getwd()
-
+func Initialize(
+	terminal bool,
+	tags []string,
+	clearTags bool,
+	autoLog string,
+	local bool,
+	cwd string,
+) (string, error) {
+	var (
+		wd  string
+		err error
+	)
+	gitRepoPath, workDirRoot, gtmPath, err := SetUpPaths(cwd, wd, err)
 	if err != nil {
 		return "", err
-	}
-
-	gitRepoPath, err := scm.GitRepoPath(wd)
-	if err != nil {
-		return "", fmt.Errorf(
-			"Unable to intialize Git Time Metric, Git repository not found in '%s'", gitRepoPath)
-	}
-	if _, err := os.Stat(gitRepoPath); os.IsNotExist(err) {
-		return "", fmt.Errorf(
-			"Unable to intialize Git Time Metric, Git repository not found in %s", gitRepoPath)
-	}
-
-	workDirRoot, err := scm.Workdir(gitRepoPath)
-	if err != nil {
-		return "", fmt.Errorf(
-			"Unable to intialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
-
-	}
-
-	if _, err := os.Stat(workDirRoot); os.IsNotExist(err) {
-		return "", fmt.Errorf(
-			"Unable to intialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
-	}
-
-	gtmPath := filepath.Join(workDirRoot, GTMDir)
-	if _, err := os.Stat(gtmPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(gtmPath, 0700); err != nil {
-			return "", err
-		}
 	}
 
 	if clearTags {
@@ -124,11 +132,7 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 			return "", err
 		}
 	}
-	err = saveTags(tags, gtmPath)
-	if err != nil {
-		return "", err
-	}
-	tags, err = LoadTags(gtmPath)
+	tags, err = SetupTags(err, tags, gtmPath)
 	if err != nil {
 		return "", err
 	}
@@ -142,7 +146,8 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 		_ = os.Remove(filepath.Join(gtmPath, "terminal.app"))
 	}
 
-	if err := scm.SetHooks(GitHooks, gitRepoPath); err != nil {
+	err = SetupHooks(local, gitRepoPath, autoLog)
+	if err != nil {
 		return "", err
 	}
 
@@ -168,6 +173,7 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 			ProjectPath  string
 			GitHooks     map[string]scm.GitHook
 			GitConfig    map[string]string
+			GitFetchRefs []string
 			GitIgnore    string
 			Terminal     bool
 		}{
@@ -176,6 +182,7 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 			workDirRoot,
 			GitHooks,
 			GitConfig,
+			GitFetchRefs,
 			GitIgnore,
 			terminal,
 		})
@@ -198,6 +205,86 @@ func Initialize(terminal bool, tags []string, clearTags bool) (string, error) {
 	return b.String(), nil
 }
 
+func SetupHooks(local bool, gitRepoPath, autoLog string) error {
+	if !local {
+		if err := scm.FetchRemotesAddRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
+			return err
+		}
+		for k, v := range GitPushRefsHooks {
+			GitHooks[k] = v
+		}
+	}
+
+	switch autoLog {
+	case "gitlab":
+		for k, v := range GitLabHooks {
+			GitHooks[k] = v
+		}
+	case "github":
+		// TODO Add hooks
+	}
+
+	if err := scm.SetHooks(GitHooks, gitRepoPath); err != nil {
+		return err
+	}
+	return nil
+}
+
+func SetupTags(err error, tags []string, gtmPath string) ([]string, error) {
+	err = saveTags(tags, gtmPath)
+	if err != nil {
+		return nil, err
+	}
+	tags, err = LoadTags(gtmPath)
+	if err != nil {
+		return nil, err
+	}
+	return tags, nil
+}
+
+func SetUpPaths(cwd, wd string, err error) (
+	gitRepoPath, workDirRoot, gtmPath string, setupError error) {
+	if cwd == "" {
+		wd, err = os.Getwd()
+	} else {
+		wd = cwd
+	}
+
+	if err != nil {
+		return "", "", "", err
+	}
+
+	gitRepoPath, err = scm.GitRepoPath(wd)
+	if err != nil {
+		return "", "", "", fmt.Errorf(
+			"Unable to initialize Git Time Metric, Git repository not found in '%s'", wd)
+	}
+	if _, err := os.Stat(gitRepoPath); os.IsNotExist(err) {
+		return "", "", "", fmt.Errorf(
+			"Unable to initialize Git Time Metric, Git repository not found in %s", gitRepoPath)
+	}
+
+	workDirRoot, err = scm.Workdir(gitRepoPath)
+	if err != nil {
+		return "", "", "", fmt.Errorf(
+			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
+
+	}
+
+	if _, err := os.Stat(workDirRoot); os.IsNotExist(err) {
+		return "", "", "", fmt.Errorf(
+			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
+	}
+
+	gtmPath = filepath.Join(workDirRoot, GTMDir)
+	if _, err := os.Stat(gtmPath); os.IsNotExist(err) {
+		if err := os.MkdirAll(gtmPath, 0700); err != nil {
+			return "", "", "", err
+		}
+	}
+	return gitRepoPath, workDirRoot, gtmPath, nil
+}
+
 //Uninitialize remove GTM tracking from the project in the current working directory
 func Uninitialize() (string, error) {
 	wd, err := os.Getwd()
@@ -208,7 +295,7 @@ func Uninitialize() (string, error) {
 	gitRepoPath, err := scm.GitRepoPath(wd)
 	if err != nil {
 		return "", fmt.Errorf(
-			"Unable to unintialize Git Time Metric, Git repository not found in %s", gitRepoPath)
+			"Unable to uninitialize Git Time Metric, Git repository not found in %s", gitRepoPath)
 	}
 
 	workDir, _ := scm.Workdir(gitRepoPath)
@@ -217,10 +304,16 @@ func Uninitialize() (string, error) {
 		return "", fmt.Errorf(
 			"Unable to uninitialize Git Time Metric, %s directory not found", gtmPath)
 	}
+	if err := scm.RemoveHooks(GitLabHooks, gitRepoPath); err != nil {
+		return "", err
+	}
 	if err := scm.RemoveHooks(GitHooks, gitRepoPath); err != nil {
 		return "", err
 	}
 	if err := scm.ConfigRemove(GitConfig, gitRepoPath); err != nil {
+		return "", err
+	}
+	if err := scm.FetchRemotesRemoveRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
 		return "", err
 	}
 	if err := scm.IgnoreRemove(GitIgnore, workDir); err != nil {
@@ -375,7 +468,7 @@ func removeTags(gtmPath string) error {
 
 // LoadTags returns the tags for the project in the gtmPath directory
 func LoadTags(gtmPath string) ([]string, error) {
-	tags := []string{}
+	var tags []string
 	files, err := ioutil.ReadDir(gtmPath)
 	if err != nil {
 		return []string{}, err
@@ -394,7 +487,8 @@ func saveTags(tags []string, gtmPath string) error {
 			if strings.TrimSpace(t) == "" {
 				continue
 			}
-			if err := ioutil.WriteFile(filepath.Join(gtmPath, fmt.Sprintf("%s.tag", t)), []byte(""), 0644); err != nil {
+			if err := ioutil.WriteFile(
+				filepath.Join(gtmPath, fmt.Sprintf("%s.tag", t)), []byte(""), 0644); err != nil {
 				return err
 			}
 		}

@@ -57,6 +57,7 @@ Options:
   -to-date=yyyy-mm-dd        Show commits thru the end of this date
   -author=""                 Show commits which contain author substring
   -message=""                Show commits which contain message substring
+  -subdir=""                 Show commits that are in subdirectory
   -today=false               Show commits for today
   -yesterday=false           Show commits for yesterday
   -this-week=false           Show commits for this week
@@ -79,7 +80,7 @@ func (c ReportCmd) Run(args []string) int {
 	var limit int
 	var color, terminalOff, appOff, fullMessage, testing bool
 	var today, yesterday, thisWeek, lastWeek, thisMonth, lastMonth, thisYear, lastYear, all bool
-	var fromDate, toDate, message, author, tags, format string
+	var fromDate, toDate, message, author, subdir, tags, format string
 	cmdFlags := flag.NewFlagSet("report", flag.ContinueOnError)
 	cmdFlags.BoolVar(&color, "force-color", false, "")
 	cmdFlags.BoolVar(&terminalOff, "terminal-off", false, "")
@@ -99,6 +100,7 @@ func (c ReportCmd) Run(args []string) int {
 	cmdFlags.BoolVar(&lastYear, "last-year", false, "")
 	cmdFlags.StringVar(&author, "author", "", "")
 	cmdFlags.StringVar(&message, "message", "", "")
+	cmdFlags.StringVar(&subdir, "subdir", "", "")
 	cmdFlags.StringVar(&tags, "tags", "", "")
 	cmdFlags.BoolVar(&all, "all", false, "")
 	cmdFlags.BoolVar(&testing, "testing", false, "")
@@ -126,7 +128,7 @@ func (c ReportCmd) Run(args []string) int {
 
 	sha1Regex := regexp.MustCompile(`\A([0-9a-f]{40})\z`)
 
-	projCommits := []report.ProjectCommits{}
+	var projCommits []report.ProjectCommits
 
 	switch {
 	case !testing && !isMinGW && !isatty.IsTerminal(os.Stdin.Fd()):
@@ -169,10 +171,6 @@ func (c ReportCmd) Run(args []string) int {
 			c.UI.Error(err.Error())
 			return 1
 		}
-		if err != nil {
-			c.UI.Error(err.Error())
-			return 1
-		}
 
 		projCommits = append(projCommits, report.ProjectCommits{Path: curProjPath, Commits: commits})
 
@@ -183,7 +181,7 @@ func (c ReportCmd) Run(args []string) int {
 			return 1
 		}
 
-		tagList := []string{}
+		var tagList []string
 		if tags != "" {
 			tagList = util.Map(strings.Split(tags, ","), strings.TrimSpace)
 		}
@@ -226,7 +224,8 @@ func (c ReportCmd) Run(args []string) int {
 		TerminalOff: terminalOff,
 		AppOff:      appOff,
 		Color:       color,
-		Limit:       limit}
+		Limit:       limit,
+		Subdir:      subdir}
 
 	s := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
 	s.Start()

@@ -1,0 +1,31 @@
+{
+  "upgrade_guid": "34c2a4d4-096b-4995-b50a-93635d22f381",
+  "version": "{VERSION}",
+  "product_name": "GTM Enhanced",
+  "manufacturer": "DEVELOPEST",
+  "name": "GTM Enhanced",
+  "name_base": "gtm",
+  "comments": "Seamless time tracking for git",
+  "installdir": "gtm",
+  "license_file": "License.rtf",
+  "registry_entries": [
+    {
+      "root": "HKCU",
+      "key": "Software\\Microsoft\\gtm",
+      "action": "createAndRemoveOnUninstall",
+      "name": "SetupPath",
+      "type": "string",
+      "value": "[INSTALLDIR]",
+      "key_path": "no"
+    }
+  ],
+  "parts": [
+    {
+      "id": "gtm",
+      "title": "GTM Enhanced",
+      "description": "gtm core",
+      "absent": "disallow",
+      "staged_dir": "staging"
+    }
+  ]
+}

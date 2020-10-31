@@ -23,7 +23,7 @@ type CommitNote struct {
 
 // FilterOutTerminal filters out terminal time from commit note
 func (n CommitNote) FilterOutTerminal() CommitNote {
-	fds := []FileDetail{}
+	var fds []FileDetail
 	for _, f := range n.Files {
 		if !f.IsTerminal() {
 			fds = append(fds, f)
@@ -34,9 +34,20 @@ func (n CommitNote) FilterOutTerminal() CommitNote {
 
 // FilterOutApp filters out app time from commit note
 func (n CommitNote) FilterOutApp() CommitNote {
-	fds := []FileDetail{}
+	var fds []FileDetail
 	for _, f := range n.Files {
 		if !f.IsApp() {
+			fds = append(fds, f)
+		}
+	}
+	return CommitNote{Files: fds}
+}
+
+// FilterOutSubdir removes all notes not related to subdir
+func (n CommitNote) FilterOutSubdir(subdir string) CommitNote {
+	var fds []FileDetail
+	for _, f := range n.Files {
+		if strings.HasPrefix(f.SourceFile, subdir) {
 			fds = append(fds, f)
 		}
 	}
@@ -54,10 +65,14 @@ func (n CommitNote) Total() int {
 
 // Marshal converts a commit note to a serialized string
 func Marshal(n CommitNote) string {
+	var (
+		filePath string
+	)
 	s := fmt.Sprintf("[ver:%s,total:%d]\n", "1", n.Total())
 	for _, fl := range n.Files {
 		// nomralize file paths to unix convention
-		s += fmt.Sprintf("%s:%d,", filepath.ToSlash(fl.SourceFile), fl.TimeSpent)
+		filePath = strings.Replace(fl.SourceFile, ":", "->", -1)
+		s += fmt.Sprintf("%s:%d,", filepath.ToSlash(filePath), fl.TimeSpent)
 		for _, e := range fl.SortEpochs() {
 			s += fmt.Sprintf("%d:%d,", e, fl.Timeline[e])
 		}
@@ -70,7 +85,7 @@ func Marshal(n CommitNote) string {
 func UnMarshal(s string) (CommitNote, error) {
 	var (
 		version string
-		files   = []FileDetail{}
+		files   []FileDetail
 	)
 
 	reHeader := regexp.MustCompile(`\[ver:\d+,total:\d+]`)
@@ -105,7 +120,7 @@ func UnMarshal(s string) (CommitNote, error) {
 				switch {
 				case groupIdx == 0 && len(fieldVals) == 2:
 					// file name and total, filename:total
-					filePath = fieldVals[0]
+					filePath = strings.Replace(fieldVals[0], "->", ":", -1)
 					t, err := strconv.Atoi(fieldVals[1])
 					if err != nil {
 						return CommitNote{}, fmt.Errorf("Unable to unmarshal time logged, format invalid, %s", err)
@@ -190,7 +205,7 @@ func (f *FileDetail) ShortenSourceFile(n int) string {
 
 // SortEpochs returns timeline keys sorted by epoch
 func (f *FileDetail) SortEpochs() []int64 {
-	keys := []int64{}
+	var keys []int64
 	for k := range f.Timeline {
 		keys = append(keys, k)
 	}

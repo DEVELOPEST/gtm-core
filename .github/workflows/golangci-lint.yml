@@ -1,15 +1,12 @@
-name: build-linux
+name: Reviewdog
 on:
-  push:
-    branches:
-      - master
-      - develop
   pull_request:
     branches:
-      - master
       - develop
+      - master
 jobs:
-  build:
+  golangci:
+    name: lint
     runs-on: ubuntu-latest
     env:
       GOPATH: ${{ github.workspace }}
@@ -19,15 +16,14 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.15.x
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           path: ./src/github.com/${{ github.repository }}
           submodules: true
       - name: Install apt dependecies
         run: |
           sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
-      - name: Install go deps
+      - name: Install go dependencies
         run: |
           go get -d github.com/Masterminds/sprig
       - name: Install git2go
@@ -40,20 +36,13 @@ jobs:
           cmake ..
           make
           sudo make install
-          cd ../../..
-          make install-static
-          cd $GOPATH
-      - name: Build
-        run: |
           go get -v -d github.com/kilpkonn/gtm-enhanced
-          cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
-          mkdir build
-          go build -o build/ ./...
-          cd build/
-          mv gtm-enhanced gtm
-          chmod +x gtm
-          cd $GOPATH
-      - uses: actions/upload-artifact@v2
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v1
         with:
-          name: gtm-linux
-          path: ./src/github.com/${{ github.repository }}/build/
+          # Can pass --config flag to change golangci-lint behavior and target
+          # directory.
+          tool_name: Reviewdog
+          reporter: github-pr-check
+          golangci_lint_flags: "--config=.golangci.yml"
+          workdir: src/github.com/kilpkonn/gtm-enhanced

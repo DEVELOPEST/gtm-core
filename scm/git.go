@@ -71,11 +71,13 @@ type CommitLimiter struct {
 	After      time.Time
 	Author     string
 	Message    string
+	Subdir     string
 	HasMax     bool
 	HasBefore  bool
 	HasAfter   bool
 	HasAuthor  bool
 	HasMessage bool
+	HasSubdir  bool
 }
 
 // NewCommitLimiter returns a new initialize CommitLimiter struct
@@ -183,7 +185,8 @@ func (m CommitLimiter) filter(c *git.Commit, cnt int) (bool, bool, error) {
 		return false, false, nil
 	}
 
-	if m.HasMessage && !(strings.Contains(c.Summary(), m.Message) || strings.Contains(c.Message(), m.Message)) {
+	if m.HasMessage &&
+		!(strings.Contains(c.Summary(), m.Message) || strings.Contains(c.Message(), m.Message)) {
 		return false, false, nil
 	}
 
@@ -198,7 +201,7 @@ func CommitIDs(limiter CommitLimiter, wd ...string) ([]string, error) {
 		w    *git.RevWalk
 		err  error
 	)
-	commits := []string{}
+	var commits []string
 
 	if len(wd) > 0 {
 		repo, err = openRepository(wd[0])
@@ -295,7 +298,7 @@ func DiffParentCommit(childCommit *git.Commit) (CommitStats, error) {
 
 		path := ""
 		fileCnt := 0
-		files := []string{}
+		var files []string
 
 		err := childTree.Walk(
 			func(s string, entry *git.TreeEntry) int {
@@ -343,7 +346,7 @@ func DiffParentCommit(childCommit *git.Commit) (CommitStats, error) {
 		}
 	}()
 
-	files := []string{}
+	var files []string
 	err = diff.ForEach(
 		func(delta git.DiffDelta, progress float64) (git.DiffForEachHunkCallback, error) {
 			// these should only be files that have changed
@@ -471,13 +474,15 @@ type CommitNote struct {
 	Stats   CommitStats
 }
 
-// ReadNote returns a commit note for the SHA1 commit id
+// ReadNote returns a commit note for the SHA1 commit id,
+// tries to fetch squashed commits notes as well by message
 func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (CommitNote, error) {
 	var (
 		err    error
 		repo   *git.Repository
 		commit *git.Commit
 		n      *git.Note
+		notes  [][]string
 	)
 
 	if len(wd) > 0 {
@@ -512,12 +517,29 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 		return CommitNote{}, err
 	}
 
+	r := regexp.MustCompile(`commit\s+([\dabcdef]*)\r?\n`)
+	msg := commit.Message()
+	notes = r.FindAllStringSubmatch(msg, -1)
+
 	var noteTxt string
 	n, err = repo.Notes.Read("refs/notes/"+nameSpace, id)
 	if err != nil {
 		noteTxt = ""
+		err = nil
 	} else {
 		noteTxt = n.Message()
+	}
+
+	for _, note := range notes {
+		noteID, err := git.NewOid(note[1])
+		if err == nil {
+			n, err = repo.Notes.Read("refs/notes/"+nameSpace, noteID)
+		}
+		if err != nil {
+			continue
+		}
+		noteTxt += "\n" + n.Message()
+
 	}
 
 	stats := CommitStats{}
@@ -603,6 +625,80 @@ func ConfigRemove(settings map[string]string, wd ...string) error {
 		}
 	}
 	return nil
+}
+
+func FetchRemotesAddRefSpecs(refSpecs []string, wd ...string) error {
+	var (
+		err        error
+		repo       *git.Repository
+		remotes    []string
+		remoteRepo *git.Remote
+		refs       []string
+		added      bool
+	)
+
+	if len(wd) > 0 {
+		repo, err = openRepository(wd[0])
+	} else {
+		repo, err = openRepository()
+	}
+	if err != nil {
+		return err
+	}
+
+	remotes, err = repo.Remotes.List()
+	if err != nil {
+		return err
+	}
+
+	for _, remote := range remotes {
+		for _, refSpec := range refSpecs {
+			remoteRepo, err = repo.Remotes.Lookup(remote)
+			if err == nil {
+				refs, err = remoteRepo.FetchRefspecs()
+			}
+			added = false
+			for _, ref := range refs {
+				added = added || ref == refSpec
+			}
+			if err == nil && !added {
+				err = repo.Remotes.AddFetch(remote, refSpec)
+			}
+			if err != nil {
+				fmt.Println("Error updating ref spec for: " + remote)
+				return err
+			}
+			remoteRepo.Free()
+		}
+	}
+	return nil
+}
+
+func FetchRemotesRemoveRefSpecs(refSpecs []string, wd ...string) error {
+	var (
+		buffer []byte
+		err    error
+		config string
+	)
+
+	if len(wd) > 0 {
+		buffer, err = ioutil.ReadFile(wd[0] + "/config")
+	} else {
+		buffer, err = ioutil.ReadFile("/config")
+	}
+	if err != nil {
+		return err
+	}
+	config = string(buffer)
+	for _, ref := range refSpecs {
+		config = strings.Replace(config, "fetch = "+ref, "", -1)
+	}
+	if len(wd) > 0 {
+		err = ioutil.WriteFile(wd[0]+"/config", []byte(config), 0644)
+	} else {
+		err = ioutil.WriteFile("/config", []byte(config), 0644)
+	}
+	return err
 }
 
 // GitHook is the Command with options to be added/removed from a git hook
