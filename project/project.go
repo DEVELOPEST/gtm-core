@@ -55,7 +55,8 @@ var (
 		"pre-push": {
 			Exe:     "git",
 			Command: "git push origin refs/notes/gtm-data --no-verify",
-			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
+			RE: regexp.MustCompile(
+				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*git\s+push\s+origin\s+refs/notes/gtm-data\s+--no-verify\.*`),
 		},
 	}
 
@@ -63,7 +64,9 @@ var (
 		"prepare-commit-msg": {
 			Exe:     "git",
 			Command: "echo -n \"/spend \" >> $1; gtm status -total-only >> $1",
-			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*echo\s+-n\s+"/spend\s+"\s+>>\s+\$1;\s+gtm(.exe"|)\s+status\s+-total-only\s+>>\s+\$1\.*`),
+			RE: regexp.MustCompile(
+				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*echo\s+-n\s+"/spend\s+"\s+>>\s+\$1;` +
+					`\s+gtm(.exe"|)\s+status\s+-total-only\s+>>\s+\$1\.*`),
 		},
 	}
 )
@@ -106,48 +109,21 @@ The following items have been removed.
 `
 
 // Initialize initializes a git repo for time tracking
-func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, local bool, cwd string) (string, error) {
+func Initialize(
+	terminal bool,
+	tags []string,
+	clearTags bool,
+	autoLog string,
+	local bool,
+	cwd string,
+) (string, error) {
 	var (
 		wd  string
 		err error
 	)
-	if cwd == "" {
-		wd, err = os.Getwd()
-	} else {
-		wd = cwd
-	}
-
+	gitRepoPath, workDirRoot, gtmPath, err := SetUpPaths(cwd, wd, err)
 	if err != nil {
 		return "", err
-	}
-
-	gitRepoPath, err := scm.GitRepoPath(wd)
-	if err != nil {
-		return "", fmt.Errorf(
-			"Unable to initialize Git Time Metric, Git repository not found in '%s'", wd)
-	}
-	if _, err := os.Stat(gitRepoPath); os.IsNotExist(err) {
-		return "", fmt.Errorf(
-			"Unable to initialize Git Time Metric, Git repository not found in %s", gitRepoPath)
-	}
-
-	workDirRoot, err := scm.Workdir(gitRepoPath)
-	if err != nil {
-		return "", fmt.Errorf(
-			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
-
-	}
-
-	if _, err := os.Stat(workDirRoot); os.IsNotExist(err) {
-		return "", fmt.Errorf(
-			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
-	}
-
-	gtmPath := filepath.Join(workDirRoot, GTMDir)
-	if _, err := os.Stat(gtmPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(gtmPath, 0700); err != nil {
-			return "", err
-		}
 	}
 
 	if clearTags {
@@ -156,11 +132,7 @@ func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, lo
 			return "", err
 		}
 	}
-	err = saveTags(tags, gtmPath)
-	if err != nil {
-		return "", err
-	}
-	tags, err = LoadTags(gtmPath)
+	tags, err = SetupTags(err, tags, gtmPath)
 	if err != nil {
 		return "", err
 	}
@@ -174,23 +146,8 @@ func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, lo
 		_ = os.Remove(filepath.Join(gtmPath, "terminal.app"))
 	}
 
-	if !local {
-		if err := scm.FetchRemotesAddRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
-			return "", err
-		}
-		for k, v := range GitPushRefsHooks {
-			GitHooks[k] = v
-		}
-	}
-
-	switch autoLog {
-	case "gitlab":
-		for k, v := range GitLabHooks {
-			GitHooks[k] = v
-		}
-	}
-
-	if err := scm.SetHooks(GitHooks, gitRepoPath); err != nil {
+	err = SetupHooks(local, gitRepoPath, autoLog)
+	if err != nil {
 		return "", err
 	}
 
@@ -246,6 +203,86 @@ func Initialize(terminal bool, tags []string, clearTags bool, autoLog string, lo
 	}
 
 	return b.String(), nil
+}
+
+func SetupHooks(local bool, gitRepoPath, autoLog string) error {
+	if !local {
+		if err := scm.FetchRemotesAddRefSpecs(GitFetchRefs, gitRepoPath); err != nil {
+			return err
+		}
+		for k, v := range GitPushRefsHooks {
+			GitHooks[k] = v
+		}
+	}
+
+	switch autoLog {
+	case "gitlab":
+		for k, v := range GitLabHooks {
+			GitHooks[k] = v
+		}
+	case "github":
+		// TODO Add hooks
+	}
+
+	if err := scm.SetHooks(GitHooks, gitRepoPath); err != nil {
+		return err
+	}
+	return nil
+}
+
+func SetupTags(err error, tags []string, gtmPath string) ([]string, error) {
+	err = saveTags(tags, gtmPath)
+	if err != nil {
+		return nil, err
+	}
+	tags, err = LoadTags(gtmPath)
+	if err != nil {
+		return nil, err
+	}
+	return tags, nil
+}
+
+func SetUpPaths(cwd, wd string, err error) (
+	gitRepoPath, workDirRoot, gtmPath string, setupError error) {
+	if cwd == "" {
+		wd, err = os.Getwd()
+	} else {
+		wd = cwd
+	}
+
+	if err != nil {
+		return "", "", "", err
+	}
+
+	gitRepoPath, err = scm.GitRepoPath(wd)
+	if err != nil {
+		return "", "", "", fmt.Errorf(
+			"Unable to initialize Git Time Metric, Git repository not found in '%s'", wd)
+	}
+	if _, err := os.Stat(gitRepoPath); os.IsNotExist(err) {
+		return "", "", "", fmt.Errorf(
+			"Unable to initialize Git Time Metric, Git repository not found in %s", gitRepoPath)
+	}
+
+	workDirRoot, err = scm.Workdir(gitRepoPath)
+	if err != nil {
+		return "", "", "", fmt.Errorf(
+			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
+
+	}
+
+	if _, err := os.Stat(workDirRoot); os.IsNotExist(err) {
+		return "", "", "", fmt.Errorf(
+			"Unable to initialize Git Time Metric, Git working tree root not found in %s", workDirRoot)
+	}
+
+	gtmPath = filepath.Join(workDirRoot, GTMDir)
+	if _, err := os.Stat(gtmPath); os.IsNotExist(err) {
+		if err := os.MkdirAll(gtmPath, 0700); err != nil {
+			return "", "", "", err
+		}
+	}
+	return gitRepoPath, workDirRoot, gtmPath, nil
 }
 
 //Uninitialize remove GTM tracking from the project in the current working directory

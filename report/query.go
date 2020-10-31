@@ -21,7 +21,9 @@ const (
 	defaultDateFormat = "Mon Jan 02 15:04:05 2006 MST"
 )
 
-func retrieveNotes(projects []ProjectCommits, terminalOff, appOff, calcStats bool, dateFormat string, subdir string) commitNoteDetails {
+func retrieveNotes(projects []ProjectCommits,
+	terminalOff, appOff, calcStats bool,
+	dateFormat, subdir string) commitNoteDetails {
 	notes := commitNoteDetails{}
 
 	if dateFormat == "" {
