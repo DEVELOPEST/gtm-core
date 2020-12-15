@@ -14,6 +14,13 @@ import (
 	"github.com/hako/durafmt"
 )
 
+const (
+	SecInMinute = 60
+	MinInHour   = 60
+	HoursInDay  = 8
+	DaysInWeek  = 5
+)
+
 // Percent returns a values percent of the total
 func Percent(val, total int) float64 {
 	if total == 0 {
@@ -45,11 +52,11 @@ func DurationStr(secs int) string {
 
 // DurationStrJira returns seconds as duration string, i.e. 1d 9h 10m
 func DurationStrJira(secs int) string {
-	var total = (time.Duration(secs) * time.Second).Truncate(time.Second).Seconds()
-	var weeks = int(total / (5 * 8 * 60 * 60))
-	var days = int(total/(8*60*60)) % 5
-	var hours = int(total/(60*60)) % 8
-	var minutes = int(total/60) % 60
+	total := (time.Duration(secs) * time.Second).Truncate(time.Second).Seconds()
+	weeks := int(total / (DaysInWeek * HoursInDay * MinInHour * SecInMinute))
+	days := int(total/(HoursInDay*MinInHour*SecInMinute)) % DaysInWeek
+	hours := int(total/(MinInHour*SecInMinute)) % HoursInDay
+	minutes := int(total/SecInMinute) % SecInMinute
 	return fmt.Sprintf("%dw %dd %dh %dm", weeks, days, hours, minutes)
 }
 
