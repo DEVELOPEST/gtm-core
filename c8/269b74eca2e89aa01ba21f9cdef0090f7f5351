@@ -1,0 +1,7 @@
+[ver:1,total:3360]
+util/string.go:1612,1608019200:60,1608022800:1552,m
+project/project.go:750,1608022800:750,m
+report/report.go:469,1608019200:80,1608022800:389,m
+command/status.go:334,1608019200:280,1608022800:54,m
+.github/workflows/golangci-lint.yml:180,1608019200:180,r
+command/init.go:15,1608022800:15,m
