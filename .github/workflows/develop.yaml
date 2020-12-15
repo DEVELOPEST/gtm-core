@@ -81,13 +81,15 @@ jobs:
           go get -d github.com/Masterminds/sprig
       - name: Install git2go
         run: |
-          go get -d github.com/libgit2/git2go@5d8eaf7e65c404a0d10d3705697dd99369630dda
+          go get -d github.com/libgit2/git2go
           cd ./src/github.com/libgit2/git2go
           git submodule update --init # get libgit2
           cd vendor/libgit2
           new-item -Name "build" -ItemType directory
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install ..
+          cmake -DCMAKE_INSTALL_PREFIX=D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install \
+            -DUSE_SSH=OFF \
+            ..
           cmake --build . --target install
       - name: Build
         run: |
