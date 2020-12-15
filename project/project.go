@@ -64,10 +64,18 @@ var (
 	GitLabHooks = map[string]scm.GitHook{
 		"prepare-commit-msg": {
 			Exe:     "git",
-			Command: "echo -n \"/spend \" >> $1; gtm status -total-only >> $1",
+			Command: "gtm status --auto-log=gitlab >> $1",
 			RE: regexp.MustCompile(
-				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*echo\s+-n\s+"/spend\s+"\s+>>\s+\$1;` +
-					`\s+gtm(.exe"|)\s+status\s+-total-only\s+>>\s+\$1\.*`),
+				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+status\s+--auto-log=gitlab\s+>>\s+\$1\.*`),
+		},
+	}
+
+	JiraHooks = map[string]scm.GitHook{
+		"prepare-commit-msg": {
+			Exe:     "git",
+			Command: "gtm status --auto-log=jira >> $1",
+			RE: regexp.MustCompile(
+				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+status\s+--auto-log=jira\s+>>\s+\$1\.*`),
 		},
 	}
 )
@@ -221,8 +229,10 @@ func SetupHooks(local bool, gitRepoPath, autoLog string) error {
 		for k, v := range GitLabHooks {
 			GitHooks[k] = v
 		}
-	case "github":
-		// TODO Add hooks
+	case "jira":
+		for k, v := range JiraHooks {
+			GitHooks[k] = v
+		}
 	}
 
 	if err := scm.SetHooks(GitHooks, gitRepoPath); err != nil {
