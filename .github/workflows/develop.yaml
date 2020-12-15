@@ -26,7 +26,7 @@ jobs:
           submodules: true
       - name: Install apt dependecies
         run: |
-          sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
+          sudo apt-get update && sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
       - name: Install go dependencies
         run: |
           go get -d github.com/Masterminds/sprig
