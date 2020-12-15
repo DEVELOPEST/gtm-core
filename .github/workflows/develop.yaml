@@ -81,7 +81,7 @@ jobs:
           go get -d github.com/Masterminds/sprig
       - name: Install git2go
         run: |
-          go get -d github.com/libgit2/git2go@5d8eaf7e65c404a0d10d3705697dd99369630dda
+          go get -d github.com/libgit2/git2go
           cd ./src/github.com/libgit2/git2go
           git submodule update --init # get libgit2
           cd vendor/libgit2
