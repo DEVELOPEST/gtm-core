@@ -64,9 +64,9 @@ jobs:
       - uses: crazy-max/ghaction-chocolatey@v1
         with:
           args: -h
-      - name: Install pkg config
+      - name: Install dependecies
         run: |
-          choco install pkgconfiglite
+          choco install pkgconfiglite openssl
       - name: Install Go
         uses: actions/setup-go@v2
         with:
