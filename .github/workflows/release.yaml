@@ -115,7 +115,7 @@ jobs:
           cd vendor/libgit2
           new-item -Name "build" -ItemType directory
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install ..
+          cmake -DUSE_SSH=OFF -DCMAKE_INSTALL_PREFIX=D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install ..
           cmake --build . --target install
       - name: Build
         run: |
