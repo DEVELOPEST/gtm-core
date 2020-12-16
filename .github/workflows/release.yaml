@@ -28,7 +28,7 @@ jobs:
           submodules: true
       - name: Install apt dependecies
         run: |
-          sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
+          sudo apt-get update && sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
       - name: Install go dependencies
         run: |
           go get -d github.com/Masterminds/sprig
@@ -115,7 +115,7 @@ jobs:
           cd vendor/libgit2
           new-item -Name "build" -ItemType directory
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install ..
+          cmake -DUSE_SSH=OFF -DCMAKE_INSTALL_PREFIX=D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install ..
           cmake --build . --target install
       - name: Build
         run: |

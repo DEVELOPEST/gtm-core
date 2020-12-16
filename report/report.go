@@ -43,6 +43,7 @@ type OutputOptions struct {
 	Color        bool
 	Limit        int
 	Subdir       string
+	AutoLog      string
 }
 
 func (o OutputOptions) limitNotes(notes commitNoteDetails) commitNoteDetails {
@@ -62,6 +63,13 @@ func Status(n note.CommitNote, options OutputOptions, projPath ...string) (strin
 	}
 	if options.AppOff {
 		n = n.FilterOutApp()
+	}
+
+	switch options.AutoLog {
+	case "gitlab":
+		return fmt.Sprintf("/spend %s", util.DurationStr(n.Total())), nil
+	case "jira":
+		return fmt.Sprintf("#time %s", util.DurationStrJira(n.Total())), nil
 	}
 
 	if options.TotalOnly {
