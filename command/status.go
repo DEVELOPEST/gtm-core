@@ -43,6 +43,7 @@ Options:
   -long-duration             If total-only, display total pending time in long duration format
   -tags=""                   Project tags to report status for, i.e --tags tag1,tag2
   -all=false                 Show status for all projects
+  -auto-log=""               Format output for auto logging time [gitlab, jira]
   -cwd=""                    Set cwd (useful for plugins)
 `
 	return strings.TrimSpace(helpText)
@@ -51,7 +52,7 @@ Options:
 // Run executes status command with args
 func (c StatusCmd) Run(args []string) int {
 	var color, terminalOff, appOff, totalOnly, all, profile, longDuration bool
-	var tags, cwd string
+	var tags, cwd, autoLog string
 	cmdFlags := flag.NewFlagSet("status", flag.ContinueOnError)
 	cmdFlags.BoolVar(&color, "color", false, "Always output color even if no terminal is detected. Use this with pagers i.e 'less -R' or 'more -R'")
 	cmdFlags.BoolVar(&terminalOff, "terminal-off", false, "Exclude time spent in terminal (Terminal plugin is required)")
@@ -60,6 +61,7 @@ func (c StatusCmd) Run(args []string) int {
 	cmdFlags.BoolVar(&longDuration, "long-duration", false, "Display total time in long duration format")
 	cmdFlags.StringVar(&tags, "tags", "", "Project tags to show status on")
 	cmdFlags.BoolVar(&all, "all", false, "Show status for all projects")
+	cmdFlags.StringVar(&autoLog, "auto-log", "", "Format time for auto logging")
 	cmdFlags.StringVar(&cwd, "cwd", "", "Set cwd")
 	cmdFlags.BoolVar(&profile, "profile", false, "Enable profiling")
 	cmdFlags.Usage = func() { c.UI.Output(c.Help()) }
@@ -102,6 +104,7 @@ func (c StatusCmd) Run(args []string) int {
 
 	options := report.OutputOptions{
 		TotalOnly:    totalOnly,
+		AutoLog:      autoLog,
 		LongDuration: longDuration,
 		TerminalOff:  terminalOff,
 		AppOff:       appOff,
