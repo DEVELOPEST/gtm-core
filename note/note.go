@@ -90,7 +90,7 @@ func UnMarshal(s string) (CommitNote, error) {
 		branch  string
 	)
 
-	reHeader := regexp.MustCompile(`\[ver:(\d+),total:(\d+)(|,branch:([^]]+))]`)
+	reHeader := regexp.MustCompile(`\[ver:(\d+),total:(\d+)(\s*|,branch:([^]]+))]`)
 
 	lines := strings.Split(s, "\n")
 	for lineIdx := 0; lineIdx < len(lines); lineIdx++ {
