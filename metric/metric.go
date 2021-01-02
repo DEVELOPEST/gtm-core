@@ -291,6 +291,7 @@ func buildCommitMaps(metricMap map[string]FileMetric) (map[string]FileMetric, ma
 // buildCommitNote creates a CommitNote for files in the commit and readonly maps in git repo at rootPath
 func buildCommitNote(
 	rootPath string,
+	branch string,
 	commitMap map[string]FileMetric,
 	readonlyMap map[string]FileMetric) (note.CommitNote, error) {
 
@@ -323,7 +324,7 @@ func buildCommitNote(
 	fls := append(flsModified, flsReadonly...)
 	sort.Sort(sort.Reverse(note.FileByTime(fls)))
 
-	return note.CommitNote{Files: fls}, nil
+	return note.CommitNote{Files: fls, Branch: branch}, nil
 }
 
 // buildInterimCommitMaps creates the write and read-only commit maps
