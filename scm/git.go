@@ -283,6 +283,36 @@ func (c CommitStats) ChangeRatePerHour(seconds int) float64 {
 	return (float64(c.Insertions+c.Deletions) / float64(seconds)) * 3600
 }
 
+// CurrentBranch return current git branch name
+func CurrentBranch(wd ...string) string {
+	var (
+		repo   *git.Repository
+		err    error
+		head   *git.Reference
+		branch string
+	)
+
+	if len(wd) > 0 {
+		repo, err = openRepository(wd[0])
+	} else {
+		repo, err = openRepository()
+	}
+	if err != nil {
+		return ""
+	}
+	defer repo.Free()
+
+	if head, err = repo.Head(); err != nil {
+		return ""
+	}
+
+	if branch, err = head.Branch().Name(); err != nil {
+		return ""
+	}
+
+	return branch
+}
+
 // DiffParentCommit compares commit to it's parent and returns their stats
 func DiffParentCommit(childCommit *git.Commit) (CommitStats, error) {
 	defer util.Profile()()
@@ -580,11 +610,10 @@ func ConfigSet(settings map[string]string, wd ...string) error {
 		return err
 	}
 
-	cfg, err = repo.Config()
-	defer cfg.Free()
-	if err != nil {
+	if cfg, err = repo.Config(); err != nil {
 		return err
 	}
+	defer cfg.Free()
 
 	for k, v := range settings {
 		err = cfg.SetString(k, v)
@@ -612,11 +641,10 @@ func ConfigRemove(settings map[string]string, wd ...string) error {
 		return err
 	}
 
-	cfg, err = repo.Config()
-	defer cfg.Free()
-	if err != nil {
+	if cfg, err = repo.Config(); err != nil {
 		return err
 	}
+	defer cfg.Free()
 
 	for k := range settings {
 		err = cfg.Delete(k)

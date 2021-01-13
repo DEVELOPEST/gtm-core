@@ -18,7 +18,8 @@ import (
 
 // CommitNote contains the time metrics for a commit
 type CommitNote struct {
-	Files []FileDetail
+	Files  []FileDetail
+	Branch string
 }
 
 // FilterOutTerminal filters out terminal time from commit note
@@ -68,7 +69,7 @@ func Marshal(n CommitNote) string {
 	var (
 		filePath string
 	)
-	s := fmt.Sprintf("[ver:%s,total:%d]\n", "1", n.Total())
+	s := fmt.Sprintf("[ver:%s,total:%d,branch:%s]\n", "1", n.Total(), n.Branch)
 	for _, fl := range n.Files {
 		// nomralize file paths to unix convention
 		filePath = strings.Replace(fl.SourceFile, ":", "->", -1)
@@ -86,22 +87,21 @@ func UnMarshal(s string) (CommitNote, error) {
 	var (
 		version string
 		files   []FileDetail
+		branch  string
 	)
 
-	reHeader := regexp.MustCompile(`\[ver:\d+,total:\d+]`)
-	reHeaderVals := regexp.MustCompile(`\d+`)
+	reHeader := regexp.MustCompile(`\[ver:(\d+),total:(\d+)(\s*|,branch:([^]]+))]`)
 
 	lines := strings.Split(s, "\n")
 	for lineIdx := 0; lineIdx < len(lines); lineIdx++ {
 		switch {
 		case strings.TrimSpace(lines[lineIdx]) == "":
 			version = ""
+			branch = ""
 		case reHeader.MatchString(lines[lineIdx]):
-			if matches := reHeaderVals.FindAllString(lines[lineIdx], 2); len(matches) == 2 {
-				version = matches[0]
-			} else {
-				return CommitNote{}, fmt.Errorf("Unable to unmarshal time logged, header format invalid, %s", lines[lineIdx])
-			}
+			matches := reHeader.FindStringSubmatch(lines[lineIdx])
+			version = matches[1]
+			branch = matches[4]
 		case version == "1":
 			fieldGroups := strings.Split(lines[lineIdx], ",")
 			if len(fieldGroups) < 3 {
@@ -178,7 +178,7 @@ func UnMarshal(s string) (CommitNote, error) {
 		}
 	}
 	sort.Sort(sort.Reverse(FileByTime(files)))
-	return CommitNote{Files: files}, nil
+	return CommitNote{Files: files, Branch: branch}, nil
 }
 
 // FileDetail contains a source file's time metrics
