@@ -1,3 +1,10 @@
 [ver:1,total:120]
 README.md:90,1610524800:90,m
 .github/workflows/golangci-lint.yml:30,1610524800:30,m
+
+[ver:1,total:720]
+README.md:240,1610524800:240,m
+.github/workflows/release.yaml:225,1610524800:225,m
+main.go:140,1610524800:140,m
+.github/workflows/develop.yaml:95,1610524800:95,m
+note/note_test.go:20,1610524800:20,r
