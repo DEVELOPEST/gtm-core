@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/util"
 )
 
 func TestMinute(t *testing.T) {

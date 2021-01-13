@@ -13,9 +13,9 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/kilpkonn/gtm-enhanced/note"
-	"github.com/kilpkonn/gtm-enhanced/project"
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/note"
+	"github.com/DEVELOPEST/gtm-core/project"
+	"github.com/DEVELOPEST/gtm-core/util"
 	isatty "github.com/mattn/go-isatty"
 )
 

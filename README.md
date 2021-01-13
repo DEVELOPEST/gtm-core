@@ -3,11 +3,11 @@
 <div align="center"><font size=16><bold>Git Time Metric</bold></font></div>
 
 ### Seamless time tracking for all your Git projects
-![Release](https://github.com/kilpkonn/gtm-enhanced/workflows/Release/badge.svg?branch=master)
-![Develop](https://github.com/kilpkonn/gtm-enhanced/workflows/Develop/badge.svg?branch=develop)
+![Release](https://github.com/DEVELOPEST/gtm-core/workflows/Release/badge.svg?branch=master)
+![Develop](https://github.com/DEVELOPEST/gtm-core/workflows/Develop/badge.svg?branch=develop)
 
 ## Installation
-See wiki: https://github.com/kilpkonn/gtm-enhanced/wiki/Installation
+See wiki: https://github.com/DEVELOPEST/gtm-core/wiki/Installation
 
 ##### $ gtm report -last-month
 <div><img src="https://cloud.githubusercontent.com/assets/630550/21582250/8a03f9dc-d015-11e6-8f77-548ef7314bf7.png"></div>
@@ -24,20 +24,6 @@ GTM is automatic, seamless and lightweight.  There is no need to remember to sta
 
 Simply install a plugin for your favorite editor and the GTM command line utility to start tracking your time now.
 
-<p><img src="https://cloud.githubusercontent.com/assets/630550/17458557/72247454-5bda-11e6-84ce-03364b8ac832.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458560/72397408-5bda-11e6-909c-c2dd2dad3b52.png" width="64" height="64">
-<img src="https://user-images.githubusercontent.com/3669664/62366235-a39ef880-b526-11e9-9408-e549b5b12a46.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458562/7264e2be-5bda-11e6-8311-bbed672ffb8f.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458559/72302916-5bda-11e6-886e-2a41f423b06f.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458563/7264f06a-5bda-11e6-9fb6-d0469730c1cb.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458556/72030a62-5bda-11e6-89e4-6a3921034aed.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458564/727d43a4-5bda-11e6-8b3c-56d3fb7bf988.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458555/71e4352e-5bda-11e6-89d3-e8ff2c3a86e2.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458561/72417ac2-5bda-11e6-9769-04cffc64397e.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458591/82e06c98-5bdb-11e6-8ae0-c5b2bd2fe97f.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/17458558/72269342-5bda-11e6-8194-d9bf030bd037.png" width="64" height="64">
-<img src="https://cloud.githubusercontent.com/assets/630550/19619987/f9f7523a-9838-11e6-99da-c3fda05ce0d6.png" width="64" height="64"></p>
-
 ### Initialize a project for time tracking
 
 <pre>$ cd /my/project/dir
@@ -45,13 +31,17 @@ $ gtm init
 
 Git Time Metric initialized for /my/project/dir
 
-     post-commit: gtm commit --yes
-  alias.fetchgtm: fetch origin refs/notes/gtm-data:refs/notes/gtm-data
-   alias.pushgtm: push origin refs/notes/gtm-data
-notes.rewriteref: refs/notes/gtm-data
-        terminal: true
-      .gitignore: /.gtm/
-            tags: tag1, tag2 </pre>
+         post-commit: gtm commit --yes
+            pre-push: git push origin refs/notes/gtm-data --no-verify
+      alias.fetchgtm: fetch origin refs/notes/gtm-data:refs/notes/gtm-data
+       alias.pushgtm: push origin refs/notes/gtm-data
+   notes.rewriteMode: concatenate
+    notes.rewriteRef: refs/notes/gtm-data
+       add fetch ref: +refs/notes/gtm-data:refs/notes/gtm-data
+            terminal: true
+          .gitignore: /.gtm/
+                tags: tag1, tag2
+</pre>
 
 ### Edit some files in your project
 
@@ -91,12 +81,12 @@ Time data can be retrieved from the remote repository by fetching.
 
 For help from the command line type `gtm --help` and `gtm <subcommand> --help`.
 
-For additional help please consult the [Wiki](https://github.com/kilpkonn/gtm-enhanced/wiki).
+For additional help please consult the [Wiki](https://github.com/DEVELOPEST/gtm-core/wiki).
 
 # Contributing
 If you find a bug or have an idea for a new feature please feel free to file new issues and submits PRs.  In particular if there isn't a plugin for your favorite editor, go ahead and create one!
 
-For more detail on how to write plugins, check out the [Wiki](https://github.com/kilpkonn/gtm-enhanced/wiki/Editor-Plugins).
+For more detail on how to write plugins, check out the [Wiki](https://github.com/DEVELOPEST/gtm-core/wiki/Editor-Plugins).
 
 # Building from source
 
@@ -108,11 +98,11 @@ You can follow any go installation tutorial, one for ubuntu for example: https:/
 sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
 ```
 
-### Clone gtm-enhanced
+### Clone gtm-core
 ```bash
-git clone https://github.com/kilpkonn/gtm-enhanced.git
-mv gtm-enhanced $GOPATH/src/github.com/kilpkonn/
-cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+git clone https://github.com/DEVELOPEST/gtm-core.git
+mv gtm-core $GOPATH/src/github.com/DEVELOPEST/
+cd $GOPATH/src/github.com/DEVELOPEST/gtm-core
 git submodule update --init # Install vendor dependecies
 ```
 
@@ -133,13 +123,13 @@ make install-static
 
 ### Build
 ```bash
-cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+cd $GOPATH/src/github.com/DEVELOPEST/gtm-core
 mkdir build
 go build -o build/ ./...
 ```
 
 # Support
 
-To report a bug, please submit an issue on the [GitHub Page](https://github.com/kilpkonn/gtm-enhanced/issues)
+To report a bug, please submit an issue on the [GitHub Page](https://github.com/DEVELOPEST/gtm-core/issues)
 
-Consult the [Wiki](https://github.com/kilpkonn/gtm-enhanced/wiki) for more information.
+Consult the [Wiki](https://github.com/DEVELOPEST/gtm-core/wiki) for more information.

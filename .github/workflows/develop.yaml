@@ -43,12 +43,12 @@ jobs:
           cd $GOPATH
       - name: Build
         run: |
-          go get -v -d github.com/kilpkonn/gtm-enhanced
-          cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+          go get -v -d github.com/DEVELOPEST/gtm-core
+          cd $GOPATH/src/github.com/DEVELOPEST/gtm-core
           mkdir build
           go build --tags static -o build/ ./...
           cd build/
-          mv gtm-enhanced gtm
+          mv gtm-core gtm
           chmod +x gtm
           cd $GOPATH
       - uses: actions/upload-artifact@v2
@@ -87,16 +87,16 @@ jobs:
           cd vendor/libgit2
           new-item -Name "build" -ItemType directory
           cd build
-          cmake -DUSE_SSH=OFF -DCMAKE_INSTALL_PREFIX=D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install ..
+          cmake -DUSE_SSH=OFF -DCMAKE_INSTALL_PREFIX=D:\a\gtm-core\gtm-core\src\github.com\libgit2\git2go\vendor\libgit2\install ..
           cmake --build . --target install
       - name: Build
         run: |
-          go get -v -d github.com/kilpkonn/gtm-enhanced
-          cd ./src/github.com/kilpkonn/gtm-enhanced
+          go get -v -d github.com/DEVELOPEST/gtm-core
+          cd ./src/github.com/DEVELOPEST/gtm-core
           new-item -Name "build" -ItemType directory
-          $env:PKG_CONFIG_PATH += ";D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install\lib\pkgconfig"   
+          $env:PKG_CONFIG_PATH += ";D:\a\gtm-core\gtm-core\src\github.com\libgit2\git2go\vendor\libgit2\install\lib\pkgconfig"
           go build -o build/ main.go
-          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./build/git2.dll"
+          Copy-Item "D:/a/gtm-core/gtm-core/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./build/git2.dll"
           cd build
           dir
           Rename-Item -Path "main.exe" -NewName "gtm.exe"
@@ -138,12 +138,12 @@ jobs:
           cd $GOPATH
       - name: Build
         run: |
-          go get -v -d github.com/kilpkonn/gtm-enhanced
-          cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+          go get -v -d github.com/DEVELOPEST/gtm-core
+          cd $GOPATH/src/github.com/DEVELOPEST/gtm-core
           mkdir build
           go build --tags static -o build/ ./...
           cd build/
-          mv gtm-enhanced gtm
+          mv gtm-core gtm
           chmod +x gtm
           cd $GOPATH
       - uses: actions/upload-artifact@v2

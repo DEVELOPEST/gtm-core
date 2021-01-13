@@ -36,7 +36,7 @@ jobs:
           cmake ..
           make
           sudo make install
-          go get -v -d github.com/kilpkonn/gtm-enhanced
+          go get -v -d github.com/DEVELOPEST/gtm-core
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v1
         with:
@@ -45,4 +45,4 @@ jobs:
           tool_name: Reviewdog
           reporter: github-pr-check
           golangci_lint_flags: "--config=.golangci.yml"
-          workdir: src/github.com/kilpkonn/gtm-enhanced
+          workdir: src/github.com/DEVELOPEST/gtm-core

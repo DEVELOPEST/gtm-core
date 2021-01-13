@@ -13,11 +13,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DEVELOPEST/gtm-core/project"
+	"github.com/DEVELOPEST/gtm-core/report"
+	"github.com/DEVELOPEST/gtm-core/scm"
+	"github.com/DEVELOPEST/gtm-core/util"
 	"github.com/briandowns/spinner"
-	"github.com/kilpkonn/gtm-enhanced/project"
-	"github.com/kilpkonn/gtm-enhanced/report"
-	"github.com/kilpkonn/gtm-enhanced/scm"
-	"github.com/kilpkonn/gtm-enhanced/util"
 	isatty "github.com/mattn/go-isatty"
 	"github.com/mitchellh/cli"
 )

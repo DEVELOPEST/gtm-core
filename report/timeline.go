@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/util"
 )
 
 type timelineCommitEntries []timelineCommitEntry

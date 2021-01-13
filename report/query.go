@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kilpkonn/gtm-enhanced/note"
-	"github.com/kilpkonn/gtm-enhanced/project"
-	"github.com/kilpkonn/gtm-enhanced/scm"
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/note"
+	"github.com/DEVELOPEST/gtm-core/project"
+	"github.com/DEVELOPEST/gtm-core/scm"
+	"github.com/DEVELOPEST/gtm-core/util"
 )
 
 const (

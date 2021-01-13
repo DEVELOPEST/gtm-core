@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/util"
 	"github.com/mitchellh/cli"
 )
 
