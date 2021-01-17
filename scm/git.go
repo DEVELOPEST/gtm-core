@@ -461,8 +461,9 @@ func CreateNote(noteTxt string, nameSpace string, wd ...string) error {
 	defer util.Profile()()
 
 	var (
-		repo *git.Repository
-		err  error
+		repo     *git.Repository
+		err      error
+		prevNote *git.Note
 	)
 
 	if len(wd) > 0 {
@@ -484,6 +485,23 @@ func CreateNote(noteTxt string, nameSpace string, wd ...string) error {
 		Name:  headCommit.Author().Name,
 		Email: headCommit.Author().Email,
 		When:  headCommit.Author().When,
+	}
+
+	prevNote, err = repo.Notes.Read("refs/notes/"+nameSpace, headCommit.Id())
+
+	if prevNote != nil {
+		noteTxt += "\n" + prevNote.Message()
+		if err := repo.Notes.Remove(
+			"refs/notes/"+nameSpace,
+			prevNote.Author(),
+			prevNote.Committer(),
+			headCommit.Id()); err != nil {
+			return err
+		}
+
+		if err := prevNote.Free(); err != nil {
+			return err
+		}
 	}
 
 	_, err = repo.Notes.Create("refs/notes/"+nameSpace, sig, sig, headCommit.Id(), noteTxt, false)
