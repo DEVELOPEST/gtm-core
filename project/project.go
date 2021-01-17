@@ -39,12 +39,14 @@ var (
 			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`),
 		},
 	}
-	// GitConfig is map of git configuration settingsx
+	// GitConfig is map of git configuration settings
 	GitConfig = map[string]string{
-		"alias.pushgtm":     "push origin refs/notes/gtm-data",
-		"alias.fetchgtm":    "fetch origin refs/notes/gtm-data:refs/notes/gtm-data",
-		"notes.rewriteRef":  "refs/notes/gtm-data",
-		"notes.rewriteMode": "concatenate"}
+		"alias.pushgtm":        "push origin refs/notes/gtm-data",
+		"alias.fetchgtm":       "fetch origin refs/notes/gtm-data:refs/notes/gtm-data",
+		"notes.rewriteRef":     "refs/notes/gtm-data",
+		"notes.rewriteMode":    "concatenate",
+		"notes.rewrite.rebase": "true",
+		"notes.rewrite.amend":  "true"}
 	// GitIgnore is file ignore to apply to git repo
 	GitIgnore = "/.gtm/"
 
