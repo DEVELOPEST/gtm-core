@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="40"
+   height="40"
+   viewBox="0 0 10.583333 10.583333"
+   version="1.1"
+   id="svg16"
+   inkscape:version="1.0.1 (1.0.1+r74)"
+   sodipodi:docname="logo.svg">
+  <defs
+     id="defs10">
+    <linearGradient
+       id="linearGradient2851"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop2849" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient2831"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop2829" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient871"
+       osb:paint="gradient">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop867" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop869" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="11.2"
+     inkscape:cx="9.6135417"
+     inkscape:cy="20.679659"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     units="px"
+     showguides="false"
+     inkscape:window-width="1848"
+     inkscape:window-height="1016"
+     inkscape:window-x="72"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       position="5.7193222,5.7801165"
+       orientation="0.47793773,0"
+       id="guide2987" />
+    <sodipodi:guide
+       position="5.7193222,5.6536622"
+       orientation="0,0.23896886"
+       id="guide2989" />
+    <sodipodi:guide
+       position="5.7825494,5.6536622"
+       orientation="-0.47793773,0"
+       id="guide2991" />
+    <sodipodi:guide
+       position="5.7825494,5.7801165"
+       orientation="0,-0.23896886"
+       id="guide2993" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata13">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="star"
+       style="fill:#29ffb4;fill-rule:evenodd;stroke-width:0.264583;fill-opacity:0.64999998"
+       id="path26"
+       sodipodi:sides="6"
+       sodipodi:cx="4.0230451"
+       sodipodi:cy="3.4135818"
+       sodipodi:r1="2.5925257"
+       sodipodi:r2="2.245193"
+       sodipodi:arg1="0.51379885"
+       sodipodi:arg2="1.0373976"
+       inkscape:flatsided="true"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 6.2808335,4.6877801 4.0484512,6.0059831 1.7906628,4.7317848 1.7652567,2.1393836 3.9976389,0.82118062 6.2554273,2.0953789 Z"
+       transform="matrix(1.2380228,0,0,1.2379501,1.6711385,1.090045)" />
+    <path
+       sodipodi:type="star"
+       style="fill:#53ff53;fill-rule:evenodd;stroke-width:0.264583;fill-opacity:0.60000002"
+       id="path28"
+       sodipodi:sides="6"
+       sodipodi:cx="4.0230451"
+       sodipodi:cy="3.4135818"
+       sodipodi:r1="2.5925257"
+       sodipodi:r2="2.245193"
+       sodipodi:arg1="0.51379885"
+       sodipodi:arg2="1.0373976"
+       inkscape:flatsided="true"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 6.2808335,4.6877801 4.0484512,6.0059831 1.7906628,4.7317848 1.7652567,2.1393836 3.9976389,0.82118062 6.2554273,2.0953789 Z"
+       transform="matrix(1.2380411,0,0,1.2380012,-1.1242166,-0.48745591)" />
+    <path
+       sodipodi:type="star"
+       style="fill:#0affff;fill-rule:evenodd;stroke-width:0.264583;fill-opacity:0.54000002"
+       id="path30"
+       sodipodi:sides="6"
+       sodipodi:cx="4.0230451"
+       sodipodi:cy="3.4135818"
+       sodipodi:r1="2.5925257"
+       sodipodi:r2="2.245193"
+       sodipodi:arg1="0.51379885"
+       sodipodi:arg2="1.0373976"
+       inkscape:flatsided="true"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 6.2808335,4.6877801 4.0484512,6.0059831 1.7906628,4.7317848 1.7652567,2.1393836 3.9976389,0.82118062 6.2554273,2.0953789 Z"
+       transform="matrix(1.2380228,0,0,1.2379501,-1.0926989,2.7220492)" />
+    <rect
+       style="fill:#0e0e0e;fill-opacity:1;stroke:#0c0c0c;stroke-width:0.438353;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect2983"
+       width="6.9172392"
+       height="2.662133"
+       x="1.7766161"
+       y="3.9902699" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.75236px;line-height:1.25;font-family:Waree;-inkscape-font-specification:'Waree, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0.0645087px;fill:#cbcbcb;fill-opacity:1;stroke:#0c0c0c;stroke-width:0;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       x="1.7078468"
+       y="6.3320608"
+       id="text2997"><tspan
+         sodipodi:role="line"
+         id="tspan2995"
+         x="1.7078468"
+         y="6.3320608"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.75236px;font-family:Waree;-inkscape-font-specification:'Waree, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#cbcbcb;fill-opacity:1;stroke:#0c0c0c;stroke-width:0;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none">GTM</tspan></text>
+  </g>
+</svg>
