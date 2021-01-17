@@ -1,3 +1,9 @@
 [ver:1,total:240,branch:release/v1.0.0]
 scm/git.go:180,1610902800:180,m
 .gitignore:60,1610902800:60,r
+
+[ver:1,total:60,branch:release/v1.0.0]
+scm/git.go:60,1610902800:60,m
+
+[ver:1,total:224]
+scm/git.go:224,1610902800:224,m
