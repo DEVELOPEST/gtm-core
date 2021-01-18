@@ -13,7 +13,7 @@ jobs:
     env:
       GOPATH: ${{ github.workspace }}
       GO111MODULE: auto
-      APP_NAME: 'gtm-enhanced'
+      APP_NAME: 'gtm-core'
       MAINTAINER: 'kilpkonn'
       DESC: 'Seamless time tracking for git.'
     steps:
@@ -45,12 +45,12 @@ jobs:
           cd $GOPATH
       - name: Build
         run: |
-          go get -v -d github.com/kilpkonn/gtm-enhanced
-          cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+          go get -v -d github.com/DEVELOPEST/gtm-core
+          cd $GOPATH/src/github.com/DEVELOPEST/gtm-core
           mkdir build
           go build --tags static -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ ./...
           cd build/
-          mv gtm-enhanced gtm
+          mv gtm-core gtm
           chmod +x gtm
           cd $GOPATH
       - uses: actions/upload-artifact@v2
@@ -59,14 +59,14 @@ jobs:
           path: ./src/github.com/${{ github.repository }}/build/
       - name: Verify version
         run: |
-          v="$(${GOPATH}/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
+          v="$(${GOPATH}/src/github.com/DEVELOPEST/gtm-core/build/gtm verify ${{ github.event.inputs.release_version }})"
           if [ ! "$v" == "true" ]; then
             exit 1
           fi
       - name: Prepare deb package
         run: |
           mkdir -p .debpkg/usr/bin
-          cp $GOPATH/src/github.com/kilpkonn/gtm-enhanced/build/gtm .debpkg/usr/bin
+          cp $GOPATH/src/github.com/DEVELOPEST/gtm-core/build/gtm .debpkg/usr/bin
           chmod +x .debpkg/usr/bin
       - name: Build deb package
         uses: jiro4989/build-deb-action@v2
@@ -80,7 +80,7 @@ jobs:
       - name: Upload deb package
         uses: actions/upload-artifact@v2
         with:
-          name: gtm-debian
+          name: gtm-core-debian
           path: |
             ./*.deb
   build-windows:
@@ -115,16 +115,16 @@ jobs:
           cd vendor/libgit2
           new-item -Name "build" -ItemType directory
           cd build
-          cmake -DUSE_SSH=OFF -DCMAKE_INSTALL_PREFIX=D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install ..
+          cmake -DUSE_SSH=OFF -DCMAKE_INSTALL_PREFIX=D:\a\gtm-core\gtm-core\src\github.com\libgit2\git2go\vendor\libgit2\install ..
           cmake --build . --target install
       - name: Build
         run: |
-          go get -v -d github.com/kilpkonn/gtm-enhanced
-          cd ./src/github.com/kilpkonn/gtm-enhanced
+          go get -v -d github.com/DEVELOPEST/gtm-core
+          cd ./src/github.com/DEVELOPEST/gtm-core
           new-item -Name "build" -ItemType directory
-          $env:PKG_CONFIG_PATH += ";D:\a\gtm-enhanced\gtm-enhanced\src\github.com\libgit2\git2go\vendor\libgit2\install\lib\pkgconfig"   
+          $env:PKG_CONFIG_PATH += ";D:\a\gtm-core\gtm-core\src\github.com\libgit2\git2go\vendor\libgit2\install\lib\pkgconfig"
           go build -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ main.go
-          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./build/git2.dll"
+          Copy-Item "D:/a/gtm-core/gtm-core/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./build/git2.dll"
           cd build
           dir
           Rename-Item -Path "main.exe" -NewName "gtm.exe"
@@ -134,7 +134,7 @@ jobs:
           path: ./src/github.com/${{ github.repository }}/build/
       - name: Verify version
         run: |
-          $v = ./src/github.com/kilpkonn/gtm-enhanced/build/gtm.exe verify ${{ github.event.inputs.release_version }}
+          $v = ./src/github.com/DEVELOPEST/gtm-core/build/gtm.exe verify ${{ github.event.inputs.release_version }}
           If ($v -eq "false") {
             Exit 1
           }
@@ -145,15 +145,15 @@ jobs:
         run: |
           cd msicreator
           md staging
-          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./staging/git2.dll"
-          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/build/gtm.exe" -Destination "./staging/gtm.exe"
-          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/deploy/windows/gtm.json" -Destination "./gtm.json"
-          Copy-Item "D:/a/gtm-enhanced/gtm-enhanced/src/github.com/kilpkonn/gtm-enhanced/deploy/windows/Licence.rtf" -Destination "./Licence.rtf"
+          Copy-Item "D:/a/gtm-core/gtm-core/src/github.com/libgit2/git2go/vendor/libgit2/install/bin/git2.dll" -Destination "./staging/git2.dll"
+          Copy-Item "D:/a/gtm-core/gtm-core/src/github.com/DEVELOPEST/gtm-core/build/gtm.exe" -Destination "./staging/gtm.exe"
+          Copy-Item "D:/a/gtm-core/gtm-core/src/github.com/DEVELOPEST/gtm-core/deploy/windows/gtm.json" -Destination "./gtm.json"
+          Copy-Item "D:/a/gtm-core/gtm-core/src/github.com/DEVELOPEST/gtm-core/deploy/windows/Licence.rtf" -Destination "./Licence.rtf"
           (Get-Content ./gtm.json).replace('{VERSION}', '${{ github.event.inputs.release_version }}') | Set-Content ./gtm.json
           py createmsi.py gtm.json
       - uses: actions/upload-artifact@v2
         with:
-          name: gtm-windows-installer
+          name: gtm-core-windows-installer
           path: ./msicreator/*.msi
   build-macOS:
     runs-on: macos-latest
@@ -189,21 +189,21 @@ jobs:
           cd $GOPATH
       - name: Build
         run: |
-          go get -v -d github.com/kilpkonn/gtm-enhanced
-          cd $GOPATH/src/github.com/kilpkonn/gtm-enhanced
+          go get -v -d github.com/DEVELOPEST/gtm-core
+          cd $GOPATH/src/github.com/DEVELOPEST/gtm-core
           mkdir build
           go build --tags static -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ ./...
           cd build/
-          mv gtm-enhanced gtm
+          mv gtm-core gtm
           chmod +x gtm
           cd $GOPATH
       - uses: actions/upload-artifact@v2
         with:
-          name: gtm-macOS
+          name: gtm-core-macOS
           path: ./src/github.com/${{ github.repository }}/build/
       - name: Verify version
         run: |
-          v="$(${GOPATH}/src/github.com/kilpkonn/gtm-enhanced/build/gtm verify ${{ github.event.inputs.release_version }})"
+          v="$(${GOPATH}/src/github.com/DEVELOPEST/gtm-core/build/gtm verify ${{ github.event.inputs.release_version }})"
           if [ ! "$v" == "true" ]; then
             exit 1
           fi

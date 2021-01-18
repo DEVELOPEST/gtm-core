@@ -13,12 +13,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kilpkonn/gtm-enhanced/event"
-	"github.com/kilpkonn/gtm-enhanced/metric"
-	"github.com/kilpkonn/gtm-enhanced/note"
-	"github.com/kilpkonn/gtm-enhanced/project"
-	"github.com/kilpkonn/gtm-enhanced/report"
-	"github.com/kilpkonn/gtm-enhanced/scm"
+	"github.com/DEVELOPEST/gtm-core/event"
+	"github.com/DEVELOPEST/gtm-core/metric"
+	"github.com/DEVELOPEST/gtm-core/note"
+	"github.com/DEVELOPEST/gtm-core/project"
+	"github.com/DEVELOPEST/gtm-core/report"
+	"github.com/DEVELOPEST/gtm-core/scm"
 
 	"github.com/mitchellh/cli"
 )

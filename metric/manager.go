@@ -5,11 +5,11 @@
 package metric
 
 import (
-	"github.com/kilpkonn/gtm-enhanced/event"
-	"github.com/kilpkonn/gtm-enhanced/note"
-	"github.com/kilpkonn/gtm-enhanced/project"
-	"github.com/kilpkonn/gtm-enhanced/scm"
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/event"
+	"github.com/DEVELOPEST/gtm-core/note"
+	"github.com/DEVELOPEST/gtm-core/project"
+	"github.com/DEVELOPEST/gtm-core/scm"
+	"github.com/DEVELOPEST/gtm-core/util"
 )
 
 // Process events for last git commit and save time spent as a git note
@@ -42,6 +42,8 @@ func Process(interim bool, projPath ...string) (note.CommitNote, error) {
 		}
 	}
 
+	branch := scm.CurrentBranch(rootPath)
+
 	var commitNote note.CommitNote
 
 	if interim {
@@ -50,7 +52,7 @@ func Process(interim bool, projPath ...string) (note.CommitNote, error) {
 			return note.CommitNote{}, err
 		}
 
-		commitNote, err = buildCommitNote(rootPath, commitMap, readonlyMap)
+		commitNote, err = buildCommitNote(rootPath, branch, commitMap, readonlyMap)
 		if err != nil {
 			return note.CommitNote{}, err
 		}
@@ -61,7 +63,7 @@ func Process(interim bool, projPath ...string) (note.CommitNote, error) {
 			return note.CommitNote{}, err
 		}
 
-		commitNote, err = buildCommitNote(rootPath, commitMap, readonlyMap)
+		commitNote, err = buildCommitNote(rootPath, branch, commitMap, readonlyMap)
 		if err != nil {
 			return note.CommitNote{}, err
 		}

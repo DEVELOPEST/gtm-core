@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/util"
 	"github.com/libgit2/git2go"
 )
 
@@ -283,6 +283,36 @@ func (c CommitStats) ChangeRatePerHour(seconds int) float64 {
 	return (float64(c.Insertions+c.Deletions) / float64(seconds)) * 3600
 }
 
+// CurrentBranch return current git branch name
+func CurrentBranch(wd ...string) string {
+	var (
+		repo   *git.Repository
+		err    error
+		head   *git.Reference
+		branch string
+	)
+
+	if len(wd) > 0 {
+		repo, err = openRepository(wd[0])
+	} else {
+		repo, err = openRepository()
+	}
+	if err != nil {
+		return ""
+	}
+	defer repo.Free()
+
+	if head, err = repo.Head(); err != nil {
+		return ""
+	}
+
+	if branch, err = head.Branch().Name(); err != nil {
+		return ""
+	}
+
+	return branch
+}
+
 // DiffParentCommit compares commit to it's parent and returns their stats
 func DiffParentCommit(childCommit *git.Commit) (CommitStats, error) {
 	defer util.Profile()()
@@ -431,8 +461,9 @@ func CreateNote(noteTxt string, nameSpace string, wd ...string) error {
 	defer util.Profile()()
 
 	var (
-		repo *git.Repository
-		err  error
+		repo     *git.Repository
+		err      error
+		prevNote *git.Note
 	)
 
 	if len(wd) > 0 {
@@ -454,6 +485,23 @@ func CreateNote(noteTxt string, nameSpace string, wd ...string) error {
 		Name:  headCommit.Author().Name,
 		Email: headCommit.Author().Email,
 		When:  headCommit.Author().When,
+	}
+
+	prevNote, err = repo.Notes.Read("refs/notes/"+nameSpace, headCommit.Id())
+
+	if prevNote != nil {
+		noteTxt += "\n" + prevNote.Message()
+		if err := repo.Notes.Remove(
+			"refs/notes/"+nameSpace,
+			prevNote.Author(),
+			prevNote.Committer(),
+			headCommit.Id()); err != nil {
+			return err
+		}
+
+		if err := prevNote.Free(); err != nil {
+			return err
+		}
 	}
 
 	_, err = repo.Notes.Create("refs/notes/"+nameSpace, sig, sig, headCommit.Id(), noteTxt, false)
@@ -580,11 +628,10 @@ func ConfigSet(settings map[string]string, wd ...string) error {
 		return err
 	}
 
-	cfg, err = repo.Config()
-	defer cfg.Free()
-	if err != nil {
+	if cfg, err = repo.Config(); err != nil {
 		return err
 	}
+	defer cfg.Free()
 
 	for k, v := range settings {
 		err = cfg.SetString(k, v)
@@ -612,11 +659,10 @@ func ConfigRemove(settings map[string]string, wd ...string) error {
 		return err
 	}
 
-	cfg, err = repo.Config()
-	defer cfg.Free()
-	if err != nil {
+	if cfg, err = repo.Config(); err != nil {
 		return err
 	}
+	defer cfg.Free()
 
 	for k := range settings {
 		err = cfg.Delete(k)

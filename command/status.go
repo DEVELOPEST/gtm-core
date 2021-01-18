@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kilpkonn/gtm-enhanced/metric"
-	"github.com/kilpkonn/gtm-enhanced/note"
-	"github.com/kilpkonn/gtm-enhanced/project"
-	"github.com/kilpkonn/gtm-enhanced/report"
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/metric"
+	"github.com/DEVELOPEST/gtm-core/note"
+	"github.com/DEVELOPEST/gtm-core/project"
+	"github.com/DEVELOPEST/gtm-core/report"
+	"github.com/DEVELOPEST/gtm-core/util"
 	"github.com/mitchellh/cli"
 )
 

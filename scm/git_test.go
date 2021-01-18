@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kilpkonn/gtm-enhanced/util"
+	"github.com/DEVELOPEST/gtm-core/util"
 )
 
 func TestWorkdir(t *testing.T) {
