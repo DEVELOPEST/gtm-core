@@ -1,6 +1,8 @@
 **Based on https://github.com/git-time-metric/gtm**
-<div align="center"><img src="https://cloud.githubusercontent.com/assets/630550/19619834/43c460dc-9835-11e6-8652-1c8fff91cf02.png" alt="GTM Logo" height="115" width="275"></div>
-<div align="center"><font size=16><bold>Git Time Metric</bold></font></div>
+
+<p align="center">
+    <img src="./readme/logo.svg" width="256" height="256" alt="logo">
+</p>
 
 ### Seamless time tracking for all your Git projects
 ![Release](https://github.com/DEVELOPEST/gtm-core/workflows/Release/badge.svg?branch=master)
@@ -20,7 +22,7 @@ See wiki: https://github.com/DEVELOPEST/gtm-core/wiki/Installation
 
 GTM is automatic, seamless and lightweight.  There is no need to remember to start and stop timers.  It runs on occasion to capture activity triggered by your editor.  The time metrics are stored locally with the git repository as [Git notes](https://git-scm.com/docs/git-notes) and can be pushed to the remote repository.
 
-### <div align="center">Plugins</div>
+### Plugins
 
 Simply install a plugin for your favorite editor and the GTM command line utility to start tracking your time now.
 
@@ -45,7 +47,7 @@ Git Time Metric initialized for /my/project/dir
 
 ### Edit some files in your project
 
-Check your progress with `gtm status`.
+Check your progress with `gtm status`.  
 
 <pre>$ gtm status
 
@@ -84,14 +86,15 @@ For help from the command line type `gtm --help` and `gtm <subcommand> --help`.
 For additional help please consult the [Wiki](https://github.com/DEVELOPEST/gtm-core/wiki).
 
 # Contributing
-If you find a bug or have an idea for a new feature please feel free to file new issues and submits PRs.  In particular if there isn't a plugin for your favorite editor, go ahead and create one!
+If you find a bug or have an idea for a new feature please feel free to file new issues and submits PRs.  
+In a particular if there isn't a plugin for your favorite editor, go ahead and create one!
 
 For more detail on how to write plugins, check out the [Wiki](https://github.com/DEVELOPEST/gtm-core/wiki/Editor-Plugins).
 
 # Building from source
 
 ### Install go
-You can follow any go installation tutorial, one for ubuntu for example: https://medium.com/golang-basics/installing-go-on-ubuntu-b443a8f0eb55
+You can follow any go installation tutorial, one for Ubuntu for example: https://medium.com/golang-basics/installing-go-on-ubuntu-b443a8f0eb55
 
 ### Install apt dependencies
 ```bash
@@ -103,7 +106,7 @@ sudo apt-get install libgit2-dev libssh2-1-dev libssl-dev cmake
 git clone https://github.com/DEVELOPEST/gtm-core.git
 mv gtm-core $GOPATH/src/github.com/DEVELOPEST/
 cd $GOPATH/src/github.com/DEVELOPEST/gtm-core
-git submodule update --init # Install vendor dependecies
+git submodule update --init  # Install vendor dependecies
 ```
 
 ### Install dependencies
@@ -111,7 +114,7 @@ git submodule update --init # Install vendor dependecies
 go get -d github.com/Masterminds/sprig
 go get -d github.com/libgit2/git2go
 cd $GOPATH/src/github.com/libgit2/git2go
-git submodule update --init # get libgit2
+git submodule update --init  # get libgit2
 cd vendor/libgit2
 mkdir build && cd build
 cmake ..
