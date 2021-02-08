@@ -1,0 +1,4 @@
+[ver:1,total:600,branch:feature/CORE-34]
+.github/workflows/release.yaml:360,1610996400:180,1611054000:180,r
+note/note.go:180,1611219600:180,r
+.github/workflows/remove-old-artifacts.yaml:60,1612810800:60,m
