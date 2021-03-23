@@ -430,7 +430,7 @@ func HeadCommit(wd ...string) (Commit, error) {
 	}
 	defer repo.Free()
 
-	headCommit, err := lookupHeadCommit(repo)
+	headCommit, err := lookupCommit(repo)
 	if err != nil {
 		if err == ErrHeadUnborn {
 			return commit, nil
@@ -457,13 +457,14 @@ func HeadCommit(wd ...string) (Commit, error) {
 }
 
 // CreateNote creates a git note associated with the head commit
-func CreateNote(noteTxt string, nameSpace string, wd ...string) error {
+func CreateNote(noteTxt, nameSpace, commitHash string, wd ...string) error {
 	defer util.Profile()()
 
 	var (
 		repo     *git.Repository
 		err      error
 		prevNote *git.Note
+		commit   *git.Commit
 	)
 
 	if len(wd) > 0 {
@@ -476,18 +477,25 @@ func CreateNote(noteTxt string, nameSpace string, wd ...string) error {
 	}
 	defer repo.Free()
 
-	headCommit, err := lookupHeadCommit(repo)
+	if commitHash != "" {
+
+	}
+	if commitHash != "" {
+		commit, err = lookupCommit(repo, commitHash)
+	} else {
+		commit, err = lookupCommit(repo)
+	}
 	if err != nil {
 		return err
 	}
 
 	sig := &git.Signature{
-		Name:  headCommit.Author().Name,
-		Email: headCommit.Author().Email,
-		When:  headCommit.Author().When,
+		Name:  commit.Author().Name,
+		Email: commit.Author().Email,
+		When:  commit.Author().When,
 	}
 
-	prevNote, err = repo.Notes.Read("refs/notes/"+nameSpace, headCommit.Id())
+	prevNote, err = repo.Notes.Read("refs/notes/"+nameSpace, commit.Id())
 
 	if prevNote != nil {
 		noteTxt += "\n" + prevNote.Message()
@@ -495,7 +503,7 @@ func CreateNote(noteTxt string, nameSpace string, wd ...string) error {
 			"refs/notes/"+nameSpace,
 			prevNote.Author(),
 			prevNote.Committer(),
-			headCommit.Id()); err != nil {
+			commit.Id()); err != nil {
 			return err
 		}
 
@@ -504,8 +512,42 @@ func CreateNote(noteTxt string, nameSpace string, wd ...string) error {
 		}
 	}
 
-	_, err = repo.Notes.Create("refs/notes/"+nameSpace, sig, sig, headCommit.Id(), noteTxt, false)
 
+	_, err = repo.Notes.Create("refs/notes/"+nameSpace, sig, sig, commit.Id(), noteTxt, false)
+
+	return err
+}
+
+func RemoveNote(nameSpace, commitHash string, wd ...string) error {
+	var (
+		repo     *git.Repository
+		err      error
+		commit   *git.Commit
+	)
+
+	if len(wd) > 0 {
+		repo, err = openRepository(wd[0])
+	} else {
+		repo, err = openRepository()
+	}
+	if err != nil {
+		return err
+	}
+	defer repo.Free()
+
+	commit, err = lookupCommit(repo, commitHash)
+
+	if err != nil {
+		return err
+	}
+
+	sig := &git.Signature{
+		Name:  commit.Author().Name,
+		Email: commit.Author().Email,
+		When:  commit.Author().When,
+	}
+
+	err = repo.Notes.Remove("refs/notes/"+nameSpace, sig, sig, commit.Id())
 	return err
 }
 
@@ -609,6 +651,19 @@ func ReadNote(commitID string, nameSpace string, calcStats bool, wd ...string) (
 		Note:    noteTxt,
 		Stats:   stats,
 	}, nil
+}
+
+func RewriteNote(oldHash, newHash, nameSpace string, wd ...string) error {
+	oldNote, err := ReadNote(oldHash, nameSpace, true, wd...)
+	if err != nil {
+		return err
+	}
+	fmt.Println(oldNote.Note)
+	err = CreateNote(oldNote.Note, nameSpace, newHash, wd...)
+	if err != nil {
+		return err
+	}
+	return RemoveNote(nameSpace, oldHash, wd...)
 }
 
 // ConfigSet persists git configuration settings
@@ -984,23 +1039,34 @@ var (
 	ErrHeadUnborn = errors.New("Head commit not found")
 )
 
-func lookupHeadCommit(repo *git.Repository) (*git.Commit, error) {
+func lookupCommit(repo *git.Repository, hash ...string) (*git.Commit, error) {
+	var (
+		oid *git.Oid
+		err error
+	)
+	if len(hash) > 0 {
+		oid, err = git.NewOid(hash[0])
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		headUnborn, err := repo.IsHeadUnborn()
+		if err != nil {
+			return nil, err
+		}
+		if headUnborn {
+			return nil, ErrHeadUnborn
+		}
 
-	headUnborn, err := repo.IsHeadUnborn()
-	if err != nil {
-		return nil, err
-	}
-	if headUnborn {
-		return nil, ErrHeadUnborn
+		headRef, err := repo.Head()
+		if err != nil {
+			return nil, err
+		}
+		defer headRef.Free()
+		oid = headRef.Target()
 	}
 
-	headRef, err := repo.Head()
-	if err != nil {
-		return nil, err
-	}
-	defer headRef.Free()
-
-	commit, err := repo.LookupCommit(headRef.Target())
+	commit, err := repo.LookupCommit(oid)
 	if err != nil {
 		return nil, err
 	}
