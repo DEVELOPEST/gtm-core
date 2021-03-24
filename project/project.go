@@ -38,15 +38,17 @@ var (
 			Command: "gtm commit --yes",
 			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`),
 		},
+		"post-rewrite": {
+			Exe:     "gtm",
+			Command: "gtm rewrite",
+			RE: regexp.MustCompile(
+				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm\s+rewrite\.*`),
+		},
 	}
 	// GitConfig is map of git configuration settings
 	GitConfig = map[string]string{
-		"alias.pushgtm":        "push origin refs/notes/gtm-data",
-		"alias.fetchgtm":       "fetch origin refs/notes/gtm-data:refs/notes/gtm-data",
-		"notes.rewriteRef":     "refs/notes/gtm-data",
-		"notes.rewriteMode":    "concatenate",
-		"notes.rewrite.rebase": "true",
-		"notes.rewrite.amend":  "true"}
+		"alias.pushgtm":  "push origin refs/notes/gtm-data",
+		"alias.fetchgtm": "fetch origin refs/notes/gtm-data:refs/notes/gtm-data"}
 	// GitIgnore is file ignore to apply to git repo
 	GitIgnore = "/.gtm/"
 
@@ -321,6 +323,9 @@ func Uninitialize() (string, error) {
 		return "", err
 	}
 	if err := scm.RemoveHooks(GitHooks, gitRepoPath); err != nil {
+		return "", err
+	}
+	if err := scm.RemoveHooks(GitPushRefsHooks, gitRepoPath); err != nil {
 		return "", err
 	}
 	if err := scm.ConfigRemove(GitConfig, gitRepoPath); err != nil {
