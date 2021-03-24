@@ -1,0 +1,7 @@
+[ver:1,total:600,branch:feature/CORE-58]
+command/rewrite_test.go:294,1616565600:294,m
+command/rewrite.go:162,1616565600:162,m
+scm/git.go:92,1616565600:92,m
+note/note.go:20,1616565600:20,r
+metric/manager.go:20,1616565600:20,r
+command/commit_test.go:12,1616565600:12,r
