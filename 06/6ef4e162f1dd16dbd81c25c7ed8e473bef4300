@@ -1,2 +1,10 @@
 [ver:1,total:60,branch:feature/CORE-57]
 .github/workflows/release.yaml:60,1616580000:60,m
+
+[ver:1,total:60,branch:feature/CORE-57]
+.github/workflows/release.yaml:60,1616580000:60,m
+
+[ver:1,total:600,branch:feature/CORE-57]
+.github/workflows/release.yaml:540,1616572800:540,m
+project/index.go:30,1616572800:30,r
+project/project.go:30,1616572800:30,r
