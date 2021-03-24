@@ -1,0 +1,3 @@
+[ver:1,total:900,branch:feature/CORE-58]
+project/project.go:828,1616565600:360,1616569200:348,1616572800:120,m
+command/uninit.go:72,1616569200:72,r
