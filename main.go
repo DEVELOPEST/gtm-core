@@ -71,6 +71,11 @@ func main() {
 				UI: ui,
 			}, nil
 		},
+		"rewrite": func() (cli.Command, error) {
+			return &command.RewriteCmd{
+				UI: ui,
+			}, nil
+		},
 	}
 
 	exitStatus, err := c.Run()

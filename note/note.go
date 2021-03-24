@@ -174,7 +174,7 @@ func UnMarshal(s string) (CommitNote, error) {
 			}
 
 		default:
-			return CommitNote{}, fmt.Errorf("Unable to unmarshal time logged, unknown version %s", version)
+			continue  // Ignore errors in syntax
 		}
 	}
 	sort.Sort(sort.Reverse(FileByTime(files)))

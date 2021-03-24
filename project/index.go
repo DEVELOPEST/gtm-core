@@ -94,7 +94,7 @@ func (i *Index) path() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(u.HomeDir, ".gtm", "project.json"), nil
+	return filepath.Join(u.HomeDir, ".config", "gtm", "project.json"), nil
 }
 
 func (i *Index) load() error {
