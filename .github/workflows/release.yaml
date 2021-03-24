@@ -16,6 +16,7 @@ jobs:
       APP_NAME: 'gtm-core'
       MAINTAINER: 'kilpkonn'
       DESC: 'Seamless time tracking for git.'
+      DEPENDS: 'libssh2-1'
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
@@ -69,13 +70,14 @@ jobs:
           cp $GOPATH/src/github.com/DEVELOPEST/gtm-core/build/gtm .debpkg/usr/bin
           chmod +x .debpkg/usr/bin
       - name: Build deb package
-        uses: jiro4989/build-deb-action@v2
+        uses: kilpkonn/build-deb-action@e8822c2bc4e1dbc5b898522a860eeab46b90776d
         with:
           package: ${{ env.APP_NAME }}
           package_root: .debpkg
           maintainer: ${{ env.MAINTAINER }}
           version: ${{ github.event.inputs.release_version }}
           arch: 'amd64'
+          depends: ${{ env.DEPENDS }}
           desc: ${{ env.DESC }}
       - name: Upload deb package
         uses: actions/upload-artifact@v2
