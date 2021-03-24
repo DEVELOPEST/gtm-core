@@ -132,7 +132,6 @@ go build -o build/ ./...
 ```
 
 # Support
-
 To report a bug, please submit an issue on the [GitHub Page](https://github.com/DEVELOPEST/gtm-core/issues)
 
 Consult the [Wiki](https://github.com/DEVELOPEST/gtm-core/wiki) for more information.
