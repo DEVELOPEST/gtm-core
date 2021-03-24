@@ -512,7 +512,6 @@ func CreateNote(noteTxt, nameSpace, commitHash string, wd ...string) error {
 		}
 	}
 
-
 	_, err = repo.Notes.Create("refs/notes/"+nameSpace, sig, sig, commit.Id(), noteTxt, false)
 
 	return err
@@ -520,9 +519,9 @@ func CreateNote(noteTxt, nameSpace, commitHash string, wd ...string) error {
 
 func RemoveNote(nameSpace, commitHash string, wd ...string) error {
 	var (
-		repo     *git.Repository
-		err      error
-		commit   *git.Commit
+		repo   *git.Repository
+		err    error
+		commit *git.Commit
 	)
 
 	if len(wd) > 0 {
@@ -658,7 +657,6 @@ func RewriteNote(oldHash, newHash, nameSpace string, wd ...string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(oldNote.Note)
 	err = CreateNote(oldNote.Note, nameSpace, newHash, wd...)
 	if err != nil {
 		return err

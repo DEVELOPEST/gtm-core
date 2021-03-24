@@ -2,7 +2,6 @@ package command
 
 import (
 	"bufio"
-	"fmt"
 	"github.com/DEVELOPEST/gtm-core/project"
 	"github.com/DEVELOPEST/gtm-core/scm"
 	"io"
@@ -47,8 +46,11 @@ func (c RewriteCmd) Run(args []string) int {
 		}
 		input = strings.TrimSpace(input)
 		hashes := strings.Split(input, " ")
-		fmt.Println(hashes[0])
-		fmt.Println(hashes[1])
+
+		if len(hashes) < 2 {
+			log.Fatal("Unexpected input!")
+		}
+
 		err = scm.RewriteNote(hashes[0], hashes[1], project.NoteNameSpace)
 
 		if err != nil {
@@ -63,4 +65,3 @@ func (c RewriteCmd) Run(args []string) int {
 func (c RewriteCmd) Synopsis() string {
 	return "Update git notes on history rewrite"
 }
-
