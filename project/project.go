@@ -67,7 +67,7 @@ var (
 
 	GitLabHooks = map[string]scm.GitHook{
 		"prepare-commit-msg": {
-			Exe:     "git",
+			Exe:     "gtm",
 			Command: "gtm status --auto-log=gitlab >> $1",
 			RE: regexp.MustCompile(
 				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+status\s+--auto-log=gitlab\s+>>\s+\$1\.*`),
@@ -76,7 +76,7 @@ var (
 
 	JiraHooks = map[string]scm.GitHook{
 		"prepare-commit-msg": {
-			Exe:     "git",
+			Exe:     "gtm",
 			Command: "gtm status --auto-log=jira >> $1",
 			RE: regexp.MustCompile(
 				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+status\s+--auto-log=jira\s+>>\s+\$1\.*`),
