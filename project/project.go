@@ -38,12 +38,12 @@ var (
 			Command: "gtm commit --yes",
 			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`),
 		},
-		//"post-rewrite": {
-		//	Exe:     "gtm",
-		//	Command: "gtm rewrite",
-		//	RE: regexp.MustCompile(
-		//		`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm\s+rewrite\.*`),
-		//},
+		// "post-rewrite": {
+		// 	Exe:     "gtm",
+		// 	Command: "gtm rewrite",
+		// 	RE: regexp.MustCompile(
+		// 		`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm\s+rewrite\.*`),
+		// },
 	}
 	// GitConfig is map of git configuration settings
 	GitConfig = map[string]string{
