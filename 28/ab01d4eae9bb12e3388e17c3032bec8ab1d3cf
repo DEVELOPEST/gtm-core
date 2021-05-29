@@ -1,0 +1,5 @@
+[ver:1,total:960,branch:feature/CORE-62]
+project/project.go:555,1619179200:195,1622293200:360,m
+note/note.go:360,1618394400:180,1619179200:180,r
+.git/MERGE_MSG:30,1619179200:30,d
+.git/TAG_EDITMSG:15,1619179200:15,d
