@@ -153,16 +153,6 @@ func NewCommitLimiter(
 
 	hasAuthor := author != ""
 	hasMessage := message != ""
-
-	// If no limit has manually been set, 0 or 1 is chosen depending on other settings
-	if max == -1 {
-		if !(dateRange.IsSet() || hasAuthor || hasMessage) {
-			max = 0
-		} else {
-			max = 1
-		}
-	}
-
 	hasMax := max > 0
 
 	return CommitLimiter{

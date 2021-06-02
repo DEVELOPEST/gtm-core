@@ -52,7 +52,7 @@ Options:
 
   Commit Limiting:
 
-  -n int=1                   Limit output, 0 is no limits, defaults to 1 when no limiting flags otherwise defaults to 0
+  -n int=1                   Limit output, 0 is no limit, defaults to 0
   -from-date=yyyy-mm-dd      Show commits starting from this date
   -to-date=yyyy-mm-dd        Show commits thru the end of this date
   -author=""                 Show commits which contain author substring
@@ -86,7 +86,7 @@ func (c ReportCmd) Run(args []string) int {
 	cmdFlags.BoolVar(&terminalOff, "terminal-off", false, "")
 	cmdFlags.BoolVar(&appOff, "app-off", false, "")
 	cmdFlags.StringVar(&format, "format", "commits", "")
-	cmdFlags.IntVar(&limit, "n", -1, "")
+	cmdFlags.IntVar(&limit, "n", 0, "")
 	cmdFlags.BoolVar(&fullMessage, "full-message", false, "")
 	cmdFlags.StringVar(&fromDate, "from-date", "", "")
 	cmdFlags.StringVar(&toDate, "to-date", "", "")
@@ -189,12 +189,6 @@ func (c ReportCmd) Run(args []string) int {
 		if err != nil {
 			c.UI.Error(err.Error())
 			return 1
-		}
-
-		// if project format and not set differently, we want all commits for the project
-		if format == "project" && limit == -1 {
-			// limit of 0 symbolises no limit
-			limit = 0
 		}
 
 		limiter, err := scm.NewCommitLimiter(
