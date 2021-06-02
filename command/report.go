@@ -86,7 +86,7 @@ func (c ReportCmd) Run(args []string) int {
 	cmdFlags.BoolVar(&terminalOff, "terminal-off", false, "")
 	cmdFlags.BoolVar(&appOff, "app-off", false, "")
 	cmdFlags.StringVar(&format, "format", "commits", "")
-	cmdFlags.IntVar(&limit, "n", 0, "")
+	cmdFlags.IntVar(&limit, "n", -1, "")
 	cmdFlags.BoolVar(&fullMessage, "full-message", false, "")
 	cmdFlags.StringVar(&fromDate, "from-date", "", "")
 	cmdFlags.StringVar(&toDate, "to-date", "", "")
@@ -191,10 +191,10 @@ func (c ReportCmd) Run(args []string) int {
 			return 1
 		}
 
-		// hack, if project format we want all commits for the project
-		if format == "project" && limit == 0 {
-			// set max to absurdly high value for number of possible commits
-			limit = 2147483647
+		// if project format and not set differently, we want all commits for the project
+		if format == "project" && limit == -1 {
+			// limit of 0 symbolises no limit
+			limit = 0
 		}
 
 		limiter, err := scm.NewCommitLimiter(

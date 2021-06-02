@@ -151,15 +151,19 @@ func NewCommitLimiter(
 		dateRange = util.LastYearRange()
 	}
 
-	hasMax := max > 0
 	hasAuthor := author != ""
 	hasMessage := message != ""
 
-	if !(hasMax || dateRange.IsSet() || hasAuthor || hasMessage) {
-		// if no limits set default to max of one result
-		hasMax = true
-		max = 1
+	// If no limit has manually been set, 0 or 1 is chosen depending on other settings
+	if max == -1 {
+		if !(dateRange.IsSet() || hasAuthor || hasMessage) {
+			max = 0
+		} else {
+			max = 1
+		}
 	}
+
+	hasMax := max > 0
 
 	return CommitLimiter{
 		DateRange:  dateRange,
