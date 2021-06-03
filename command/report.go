@@ -52,7 +52,7 @@ Options:
 
   Commit Limiting:
 
-  -n int=1                   Limit output, 0 is no limit, defaults to 0
+  -n int=0                   Limit output, 0 is no limit
   -from-date=yyyy-mm-dd      Show commits starting from this date
   -to-date=yyyy-mm-dd        Show commits thru the end of this date
   -author=""                 Show commits which contain author substring
