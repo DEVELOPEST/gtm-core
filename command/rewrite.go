@@ -54,7 +54,7 @@ func (c RewriteCmd) Run(args []string) int {
 		err = scm.RewriteNote(hashes[0], hashes[1], project.NoteNameSpace)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 

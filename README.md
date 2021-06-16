@@ -87,9 +87,7 @@ For additional help please consult the [Wiki](https://github.com/DEVELOPEST/gtm-
 
 # Contributing
 If you find a bug or have an idea for a new feature please feel free to file new issues and submits PRs.  
-In a particular if there isn't a plugin for your favorite editor, go ahead and create one!
-
-For more detail on how to write plugins, check out the [Wiki](https://github.com/DEVELOPEST/gtm-core/wiki/Editor-Plugins).
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for more detailed information!
 
 # Building from source
 
@@ -131,8 +129,7 @@ mkdir build
 go build -o build/ ./...
 ```
 
-# Support
-
+## Support
 To report a bug, please submit an issue on the [GitHub Page](https://github.com/DEVELOPEST/gtm-core/issues)
 
 Consult the [Wiki](https://github.com/DEVELOPEST/gtm-core/wiki) for more information.

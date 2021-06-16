@@ -52,7 +52,7 @@ Options:
 
   Commit Limiting:
 
-  -n int=1                   Limit output, 0 is no limits, defaults to 1 when no limiting flags otherwise defaults to 0
+  -n int=0                   Limit output, 0 is no limit
   -from-date=yyyy-mm-dd      Show commits starting from this date
   -to-date=yyyy-mm-dd        Show commits thru the end of this date
   -author=""                 Show commits which contain author substring
@@ -189,12 +189,6 @@ func (c ReportCmd) Run(args []string) int {
 		if err != nil {
 			c.UI.Error(err.Error())
 			return 1
-		}
-
-		// hack, if project format we want all commits for the project
-		if format == "project" && limit == 0 {
-			// set max to absurdly high value for number of possible commits
-			limit = 2147483647
 		}
 
 		limiter, err := scm.NewCommitLimiter(

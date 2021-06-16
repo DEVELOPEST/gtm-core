@@ -38,17 +38,21 @@ var (
 			Command: "gtm commit --yes",
 			RE:      regexp.MustCompile(`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+commit\s+--yes\.*`),
 		},
-		"post-rewrite": {
-			Exe:     "gtm",
-			Command: "gtm rewrite",
-			RE: regexp.MustCompile(
-				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm\s+rewrite\.*`),
-		},
+		// "post-rewrite": {
+		// 	Exe:     "gtm",
+		// 	Command: "gtm rewrite",
+		// 	RE: regexp.MustCompile(
+		// 		`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm\s+rewrite\.*`),
+		// },
 	}
 	// GitConfig is map of git configuration settings
 	GitConfig = map[string]string{
-		"alias.pushgtm":  "push origin refs/notes/gtm-data",
-		"alias.fetchgtm": "fetch origin refs/notes/gtm-data:refs/notes/gtm-data"}
+		"alias.pushgtm":        "push origin refs/notes/gtm-data",
+		"alias.fetchgtm":       "fetch origin refs/notes/gtm-data:refs/notes/gtm-data",
+		"notes.rewriteRef":     "refs/notes/gtm-data",
+		"notes.rewriteMode":    "concatenate",
+		"notes.rewrite.rebase": "true",
+		"notes.rewrite.amend":  "true"}
 	// GitIgnore is file ignore to apply to git repo
 	GitIgnore = "/.gtm/"
 
@@ -67,7 +71,7 @@ var (
 
 	GitLabHooks = map[string]scm.GitHook{
 		"prepare-commit-msg": {
-			Exe:     "git",
+			Exe:     "gtm",
 			Command: "gtm status --auto-log=gitlab >> $1",
 			RE: regexp.MustCompile(
 				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+status\s+--auto-log=gitlab\s+>>\s+\$1\.*`),
@@ -76,7 +80,7 @@ var (
 
 	JiraHooks = map[string]scm.GitHook{
 		"prepare-commit-msg": {
-			Exe:     "git",
+			Exe:     "gtm",
 			Command: "gtm status --auto-log=jira >> $1",
 			RE: regexp.MustCompile(
 				`(?s)[/:a-zA-Z0-9$_=()"\.\|\-\\ ]*gtm(.exe"|)\s+status\s+--auto-log=jira\s+>>\s+\$1\.*`),
