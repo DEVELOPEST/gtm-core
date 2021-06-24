@@ -197,7 +197,6 @@ jobs:
           go build --tags static -ldflags "-X main.Version=${{ github.event.inputs.release_version }}" -o build/ ./...
           cd build/
           mv gtm-core gtm
-          chmod +x gtm
           cd $GOPATH
       - uses: actions/upload-artifact@v2
         with:
