@@ -9,7 +9,36 @@
 ![Develop](https://github.com/DEVELOPEST/gtm-core/workflows/Develop/badge.svg?branch=develop)
 
 ## Installation
-See wiki: https://github.com/DEVELOPEST/gtm-core/wiki/Installation
+
+### macOS
+
+The simplest way to install is to use [Homebrew](http://brew.sh)
+
+```
+brew tap developest/gtm
+brew install gtm
+```
+
+### Windows
+
+Download and run the Windows installer (.msi file) from [here](https://github.com/DEVELOPEST/gtm-core/releases/latest)
+
+### Linux
+
+The simplest way to install is to use [Linuxbrew](http://linuxbrew.sh/)
+
+```
+brew tap developest/gtm
+brew install gtm
+```
+
+There also is a debian package available under the [latest release](https://github.com/DEVELOPEST/gtm-core/releases/latest)
+
+### Manual install
+
+To install GTM manually on macOS, Windows or Linux, read the wiki: https://github.com/DEVELOPEST/gtm-core/wiki/Installation
+
+## GTM
 
 ##### $ gtm report -last-month
 <div><img src="https://cloud.githubusercontent.com/assets/630550/21582250/8a03f9dc-d015-11e6-8f77-548ef7314bf7.png"></div>
