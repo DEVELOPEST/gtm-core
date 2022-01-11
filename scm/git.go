@@ -325,7 +325,7 @@ func DiffParentCommit(childCommit *git.Commit) (CommitStats, error) {
 		var files []string
 
 		err := childTree.Walk(
-			func(s string, entry *git.TreeEntry) int {
+			func(s string, entry *git.TreeEntry) error {
 				switch entry.Filemode {
 				case git.FilemodeTree:
 					// directory where file entry is located
@@ -334,7 +334,7 @@ func DiffParentCommit(childCommit *git.Commit) (CommitStats, error) {
 					files = append(files, filepath.Join(path, entry.Name))
 					fileCnt++
 				}
-				return 0
+				return nil
 			})
 
 		if err != nil {
