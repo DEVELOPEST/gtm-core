@@ -32,6 +32,8 @@ brew tap developest/gtm
 brew install gtm
 ```
 
+There also is a debian package available under the [latest release](https://github.com/DEVELOPEST/gtm-core/releases/latest)
+
 ### Manual install
 
 To install GTM manually on macOS, Windows or Linux, read the wiki: https://github.com/DEVELOPEST/gtm-core/wiki/Installation
